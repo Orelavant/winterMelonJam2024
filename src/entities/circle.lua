@@ -6,20 +6,17 @@ local utils = require "lib.utils"
 ---@class Circle:Point
 local Circle = Point:extend()
 
-CIRCLE_TYPES = {player=0, enemy=1, bullet=2}
-
 ---Constructor
-function Circle:new(x, y, dx, dy, radius, speed, color, type)
+function Circle:new(x, y, dx, dy, radius, speed, color)
     Circle.super.new(self, x, y, color)
     self.dx, self.dy = dx, dy
     self.radius = radius
     self.speed = speed
-    self.type = type
 end
 
 function Circle:update(dt)
     -- Normalize vectors to prevent diagonals being faster
-    -- self.dx, self.dy = utils.normVectors(self.dx, self.dy)
+    self.dx, self.dy = utils.normVectors(self.dx, self.dy)
 
     -- Update circle position
     self.x = self.x + self.speed * self.dx * dt
@@ -31,13 +28,11 @@ end
 
 function Circle:draw()
     -- Debug to see where circles are traveling and how quickly
-    if DebugMode then
-        love.graphics.line(self.x, self.y, self.x + (self.dx * self.speed * 0.25), self.y + (self.dy * self.speed * 0.25))
-    end
+    -- if DebugMode then
+        -- love.graphics.line(self.x, self.y, self.x + (self.dx * self.speed * 0.25), self.y + (self.dy * self.speed * 0.25))
+    -- end
 
     love.graphics.setColor(self.color)
-	love.graphics.circle("fill", self.x, self.y, self.radius)
-    love.graphics.setColor(Orange)
 	love.graphics.circle("line", self.x, self.y, self.radius)
 end
 
@@ -63,5 +58,23 @@ function Circle:checkCircleCollision(circle)
 
     return dist < (self.radius + circle.radius)
 end
+
+function Circle:constrainCircleToRadiusBroken(circle)
+    -- Get angle to target circle
+    local angle = utils.getSourceTargetAngle(self.x, self.y, circle.x, circle.y)
+
+    -- Constrain angle to radius
+    local constrainedAngle = angle * (self.radius / angle)
+
+    -- Get components of angle
+    local cos,sin = math.cos(constrainedAngle), math.cos(constrainedAngle)
+
+    -- Constrain the x and y to the circle
+    circle.x = self.x + self.radius * cos
+    circle.y = self.y + self.radius * sin
+
+    return circle
+end
+
 
 return Circle

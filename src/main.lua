@@ -19,41 +19,29 @@ ScreenHeight = love.graphics.getHeight()
 
 -- Colors
 -- https://lospec.com/palette-list/coldfire-gb
-local darkblue  = utils.normRgba(70, 66, 94)
-local lightblue  = utils.normRgba(91, 118, 141)
-local pink  = utils.normRgba(209, 124, 124)
+DarkBlue  = utils.normRgba(70, 66, 94)
+LightBlue  = utils.normRgba(91, 118, 141)
+Pink  = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
 -- Attributes
-local playerSpeed = 160
-local playerRadius = 25
+-- love.graphics.setBackgroundColor(darkBlue)
 
 -- Callbacks
 function love.load()
 	-- Init classes
-	CircleInit = require "entities.circle"
+	PlayerInit = require "entities.player"
+    CircleInit = require "entities.circle"
 
     -- Init objs
-    Player = CircleInit(ScreenWidth / 2, ScreenHeight / 2, 1, 1, playerRadius, playerSpeed, darkblue, CIRCLE_TYPES.player)
+    Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2, 1, 1, playerRadius, playerSpeed, lightBlue)
+    -- for _,circle in Player.chain do
+    --     print(circle.color)
+    -- end
 end
 
 function love.update(dt)
     Player:update(dt)
-
-    if love.keyboard.isDown("w") then
-        Player.dy = -1
-    elseif love.keyboard.isDown("s") then
-        Player.dy = 1
-    else
-        Player.dy = 0
-    end
-    if love.keyboard.isDown("d") then
-        Player.dx = 1
-    elseif love.keyboard.isDown("a") then
-        Player.dx = -1
-    else
-        Player.dx = 0
-    end
 end
 
 function love.draw()
@@ -61,4 +49,17 @@ function love.draw()
 end
 
 function love.keypressed(key)
+    if key == "space" then
+        Player:constrainCircleToRadius(Circle)
+    end
+
+	-- Reset game
+	if key == "r" then
+		resetGame()
+	end
+end
+
+function resetGame()
+	GameState = GAME_STATES.done
+	love.load()
 end

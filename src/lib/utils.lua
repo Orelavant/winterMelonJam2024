@@ -10,12 +10,37 @@ function utils.normRgba(r, g, b, a)
 end
 
 function utils.normVectors(dx, dy)
-    if dx == 0 or dy == 0 then
+    -- Avoid divide by 0 err
+    if dx == 0 and dy == 0 then
+        return dx, dy
+    end
 
-    -- Normalize the direction vector (dx, dy) to have a magnitude of 1
+    -- Get length of hypotenuse
     local magnitude = math.sqrt(dx^2 + dy^2)
 
     return dx / magnitude, dy / magnitude
+end
+
+function utils.getSourceTargetAngle(sourceX, sourceY, targetX, targetY)
+    local angle = math.atan2(
+        targetY - sourceY,
+        targetX - sourceX
+    )
+
+    return angle
+end
+
+function utils.getDistance(x1, y1, x2, y2)
+    local horizontal_distance = x1 - x2
+    local vertical_distance = y1 - y2
+
+    local a = horizontal_distance ^ 2
+    local b = vertical_distance ^ 2
+
+    local c = a + b
+    local distance = math.sqrt(c)
+
+    return distance
 end
 
 return utils
