@@ -1,2 +1,3 @@
-# winterMelonJam2024
-Submission for winterMelonJam2024
+Submission for Winter Melon Jam 2024
+
+Made using Love2D
