@@ -1,4 +1,4 @@
-name = "Defencemancer"
+name = "melonJam2024Game"
 default_targets = ["win32", "win64", "macos", "lovejs"]
 build_directory = "../bin"
 
