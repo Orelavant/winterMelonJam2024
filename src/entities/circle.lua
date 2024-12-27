@@ -1,6 +1,7 @@
 
 -- Imports
 local Point = require "entities.point"
+local utils = require "lib.utils"
 
 ---@class Circle:Point
 local Circle = Point:extend()
@@ -17,6 +18,9 @@ function Circle:new(x, y, dx, dy, radius, speed, color, type)
 end
 
 function Circle:update(dt)
+    -- Normalize vectors to prevent diagonals being faster
+    -- self.dx, self.dy = utils.normVectors(self.dx, self.dy)
+
     -- Update circle position
     self.x = self.x + self.speed * self.dx * dt
     self.y = self.y + self.speed * self.dy * dt
