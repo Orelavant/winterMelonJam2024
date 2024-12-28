@@ -19,6 +19,7 @@ Player.tailRangeDiv = 5
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
+Player.tMoveRange = 200
 Player.hooverRange = 100
 Player.consumeRange = 20
 
@@ -60,7 +61,7 @@ function Player:draw()
 	for i, circle in ipairs(self.chain) do
 		circle:draw()
 
-        if i == #self.chain then
+        if DebugMode and i == #self.chain then
             love.graphics.setColor({1, 1, 1})
             love.graphics.circle(
                 "line",
@@ -68,26 +69,13 @@ function Player:draw()
                 circle.y,
                 Player.hooverRange
             )
+            love.graphics.circle(
+                "line",
+                circle.x,
+                circle.y,
+                Player.tMoveRange
+            )
         end
-	end
-end
-
-function Player:updateBody(dt)
-    -- Update front half to follow head
-	for i=1,#self.chain do
-        if i == 1 then
-            -- Get inputs and update head and tail accordingly
-            self:updateHead(self.chain[i], dt)
-            self:updateTail(self.chain[#self.chain], dt)
-        else
-            -- Update to follow head
-            self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], self.hNonZeroDx, self.hNonZeroDy, dt)
-
-            -- Update back half to follow tail
-            if i > self.headFollowerCount then
-                self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], -self.tNonZeroDx, -self.tNonZeroDy, dt)
-            end
-		end
 	end
 end
 
@@ -126,6 +114,98 @@ function Player:shoot(mouseX, mouseY)
         -- Add to active bullets, remove from self
         table.insert(ActiveBulletTable, bullet)
         table.remove(self.bullets, #self.bullets)
+    end
+end
+
+function Player:updateBody(dt)
+    -- Update front half to follow head
+	for i=1,#self.chain do
+        -- Get mouse position
+        local tail = self.chain[#self.chain]
+        local mouseX, mouseY = love.mouse.getPosition()
+        local mouseDist = utils.getDistance(tail.x, tail.y, mouseX, mouseY)
+
+        if i == 1 then
+            -- Update head
+            self:updateHead(self.chain[i], dt)
+
+            -- Update tail
+            self:updateTail(mouseX, mouseY, mouseDist, tail, dt)
+        else
+            -- Update to follow head
+            self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], self.hNonZeroDx, self.hNonZeroDy, dt)
+
+            -- Update back half to follow tail
+            if i > self.headFollowerCount and mouseDist <= Player.tMoveRange then
+                self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], -self.tNonZeroDx, -self.tNonZeroDy, dt)
+            end
+		end
+	end
+end
+
+function Player:updateHead(circle, dt)
+	local dx, dy
+
+	-- Input to Movement
+	if love.keyboard.isDown("w") then
+		dy = -1
+	elseif love.keyboard.isDown("s") then
+		dy = 1
+	else
+		dy = 0
+	end
+
+	if love.keyboard.isDown("d") then
+		dx = 1
+	elseif love.keyboard.isDown("a") then
+		dx = -1
+	else
+		dx = 0
+	end
+
+	-- Normalize vectors to prevent diagonals being faster
+	dx, dy = utils.normVectors(dx, dy)
+
+	-- Update last nonzero dx dy
+	if dx ~= 0 or dy ~= 0 then
+		self.hNonZeroDx, self.hNonZeroDy = dx, dy
+	end
+
+	-- Update dx, dy
+	circle.dx, circle.dy = dx, dy
+
+    -- Update circle
+    circle:update(dt)
+
+    -- Update location of head
+    self.hX, self.hY = circle.x, circle.y
+end
+
+function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
+    if mouseDist <= Player.tMoveRange then
+        -- Get angle and angle components to target
+        local angle = utils.getSourceTargetAngle(circle.x, circle.y, mouseX, mouseY)
+        local cos, sin = math.cos(angle), math.sin(angle)
+
+        -- Update last nonzero dx dy
+        if cos ~= 0 or sin ~= 0 then
+            self.tNonZeroDx, self.tNonZeroDy = cos, sin
+        end
+
+        -- Acceleration based off distance to target
+        local accel = math.min(mouseDist / Player.bodyAccelDiv, Player.tailAccel)
+        if accel < 0.2 then
+            accel = 0
+        end
+
+        -- Update circle2 position
+        circle.x = circle.x + circle.speed * cos * accel * dt
+        circle.y = circle.y + circle.speed * sin * accel * dt
+
+        self.tailX, self.tailY = circle.x, circle.y
+
+        -- Handle screen collision
+        circle:handleSmoothScreenCollision()
     end
 end
 
@@ -213,73 +293,5 @@ function Player:initChain()
 	end
 end
 
-function Player:updateHead(circle, dt)
-	local dx, dy
-
-	-- Input to Movement
-	if love.keyboard.isDown("w") then
-		dy = -1
-	elseif love.keyboard.isDown("s") then
-		dy = 1
-	else
-		dy = 0
-	end
-
-	if love.keyboard.isDown("d") then
-		dx = 1
-	elseif love.keyboard.isDown("a") then
-		dx = -1
-	else
-		dx = 0
-	end
-
-	-- Normalize vectors to prevent diagonals being faster
-	dx, dy = utils.normVectors(dx, dy)
-
-	-- Update last nonzero dx dy
-	if dx ~= 0 or dy ~= 0 then
-		self.hNonZeroDx, self.hNonZeroDy = dx, dy
-	end
-
-	-- Update dx, dy
-	circle.dx, circle.dy = dx, dy
-
-    -- Update circle
-    circle:update(dt)
-
-    -- Update location of head
-    self.hX, self.hY = circle.x, circle.y
-end
-
-function Player:updateTail(circle, dt)
-    local mouseX, mouseY = love.mouse.getPosition()
-    local mouseDist = utils.getDistance(circle.x, circle.y, mouseX, mouseY)
-
-    if mouseDist <= Player.hooverRange then
-        -- Get angle and angle components to target
-        local angle = utils.getSourceTargetAngle(circle.x, circle.y, mouseX, mouseY)
-        local cos, sin = math.cos(angle), math.sin(angle)
-
-        -- Update last nonzero dx dy
-        if cos ~= 0 or sin ~= 0 then
-            self.tNonZeroDx, self.tNonZeroDy = cos, sin
-        end
-
-        -- Acceleration based off distance to target
-        local accel = math.min(utils.getDistance(circle.x, circle.y, mouseX, mouseY) / Player.bodyAccelDiv, Player.tailAccel)
-        if accel < 0.2 then
-            accel = 0
-        end
-
-        -- Update circle2 position
-        circle.x = circle.x + circle.speed * cos * accel * dt
-        circle.y = circle.y + circle.speed * sin * accel * dt
-
-        self.tailX, self.tailY = circle.x, circle.y
-
-        -- Handle screen collision
-        circle:handleSmoothScreenCollision()
-    end
-end
 
 return Player

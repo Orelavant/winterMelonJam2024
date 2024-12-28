@@ -16,10 +16,6 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Consider revamping movement so that that head is attracted to mouse position and tail is repelled by it for extra theme bonus points. Could be that there's an attraction and repel zone for head and tail, so that players can sit still if they want",
-                    "id": "dcrhyjo4mgy5x8hu7o72yg85"
-                },
-                {
                     "text": "Bullet/Module Random Spawning",
                     "id": "zqxy6lyzy6t5702irvqrwpik"
                 },
@@ -68,6 +64,10 @@
                     "id": "n3d8qrbt8b8uat3nc8djwc43"
                 },
                 {
+                    "text": "Consider revamping movement so that that head is attracted to mouse position and tail is repelled by it for extra theme bonus points. Could be that there's an attraction and repel zone for head and tail, so that players can sit still if they want",
+                    "id": "dcrhyjo4mgy5x8hu7o72yg85"
+                },
+                {
                     "text": "Tutorial area, where you have to hoover up some resources, and then shoot the play button",
                     "id": "e4wpwcap60um9g8wxiofgm7s"
                 },
@@ -111,5 +111,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735407615304
+    "timestamp": 1735407670706
 }
