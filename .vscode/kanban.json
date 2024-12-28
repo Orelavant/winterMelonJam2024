@@ -5,6 +5,10 @@
             "title": "Bugs",
             "tasks": [
                 {
+                    "text": "Have the circles also push against each other so they don't collapse on each other",
+                    "id": "pwf8fl9f61mlooiivrnzfcs3"
+                },
+                {
                     "text": "Put all circles in chain",
                     "id": "tyboa50sy8u86u8031hdi2e7"
                 },
@@ -20,7 +24,19 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Choose diff color pallete",
+                    "text": "You collect the modules over time",
+                    "id": "c3a6srjrct4txofmfpfhto0v"
+                },
+                {
+                    "text": "Circles have individual health!",
+                    "id": "dyj94cuktivjjn960igvhejx"
+                },
+                {
+                    "text": "Make a 2 way gradient, so that head and tail look very distinct from one another",
+                    "id": "lqtj4ih2tzc3o3s6tdz2n3tx"
+                },
+                {
+                    "text": "Choose diff color pallete, one that shows up well against the black.",
                     "id": "h252uram6v17zb93880txw4d"
                 }
             ],
@@ -42,5 +58,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735343700440
+    "timestamp": 1735347888466
 }
