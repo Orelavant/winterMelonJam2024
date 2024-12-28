@@ -16,6 +16,10 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "Consider that head is attracted to mouse position and tail is repelled by it for extra theme bonus points",
+                    "id": "dcrhyjo4mgy5x8hu7o72yg85"
+                },
+                {
                     "text": "Bullet/Module Random Spawning",
                     "id": "zqxy6lyzy6t5702irvqrwpik"
                 },
@@ -107,5 +111,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735363201392
+    "timestamp": 1735406287793
 }

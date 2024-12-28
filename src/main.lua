@@ -35,15 +35,31 @@ function love.load()
 
 	-- Init objs
 	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
-    BulletTable = {}
+    ActiveBulletTable = {}
+    DormantBulletTable = {}
 end
 
 function love.update(dt)
 	Player:update(dt)
+
+    -- Update bullets
+    for i=#ActiveBulletTable,1,-1 do
+        local bullet = ActiveBulletTable[i]
+        bullet:update(dt)
+
+        -- Remove if screen collision
+        if bullet.removeFlag then
+            table.remove(ActiveBulletTable, i)
+        end
+    end
 end
 
 function love.draw()
-    for _,bullet in ipairs(BulletTable) do
+    for _,bullet in ipairs(ActiveBulletTable) do
+        bullet:draw()
+    end
+
+    for _,bullet in ipairs(DormantBulletTable) do
         bullet:draw()
     end
 
@@ -72,8 +88,15 @@ function love.keypressed(key)
     end
 end
 
+function love.mousepressed(x, y, button)
+    -- Shoot
+    if button == 1 then
+        Player:shoot(x, y)
+    end
+end
+
 function spawnBullet(x, y)
-    table.insert(BulletTable, BulletInit(x, y, 3, Pink))
+    table.insert(DormantBulletTable, BulletInit(x, y))
 end
 
 function resetGame()

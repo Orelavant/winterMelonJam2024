@@ -92,8 +92,8 @@ function Player:updateBody(dt)
 end
 
 function Player:hoover(dt)
-    for i=#BulletTable,1,-1 do
-        local bullet = BulletTable[i]
+    for i=#DormantBulletTable,1,-1 do
+        local bullet = DormantBulletTable[i]
         local dist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
 
         -- Bring closer
@@ -102,14 +102,30 @@ function Player:hoover(dt)
             local cos,sin = math.cos(angle),math.sin(angle)
             bullet.dx = cos
             bullet.dy = sin
-            bullet:update(cos, sin, dist, dt)
+            bullet:hoover(cos, sin, dist, dt)
         end
 
         -- Remove from global bullet table and put in player table
         if dist <= Player.consumeRange then
-            table.insert(self.bullets, BulletTable[i])
-            table.remove(BulletTable, i)
+            table.insert(self.bullets, bullet)
+            table.remove(DormantBulletTable, i)
         end
+    end
+end
+
+function Player:shoot(mouseX, mouseY)
+    -- Update bullet
+    if #self.bullets > 0 then
+        local bullet = self.bullets[#self.bullets]
+        local cos,sin = utils.getSourceTargetAngleComponents(self.hX, self.hY, mouseX, mouseY)
+        bullet.x = self.hX
+        bullet.y = self.hY
+        bullet.dx = cos
+        bullet.dy = sin
+
+        -- Add to active bullets, remove from self
+        table.insert(ActiveBulletTable, bullet)
+        table.remove(self.bullets, #self.bullets)
     end
 end
 
@@ -139,7 +155,7 @@ function Player:constrainCircleToRadius(circle1, circle2, nonZeroDx, nonZeroDy, 
     end
 
     -- Handle screen collision
-    circle2:handleScreenCollision()
+    circle2:handleSmoothScreenCollision()
 
 	return circle2
 end
@@ -236,32 +252,34 @@ function Player:updateHead(circle, dt)
 end
 
 function Player:updateTail(circle, dt)
-	-- Get target
     local mouseX, mouseY = love.mouse.getPosition()
+    local mouseDist = utils.getDistance(circle.x, circle.y, mouseX, mouseY)
 
-	-- Get angle and angle components to target
-	local angle = utils.getSourceTargetAngle(circle.x, circle.y, mouseX, mouseY)
-	local cos, sin = math.cos(angle), math.sin(angle)
+    if mouseDist <= Player.hooverRange then
+        -- Get angle and angle components to target
+        local angle = utils.getSourceTargetAngle(circle.x, circle.y, mouseX, mouseY)
+        local cos, sin = math.cos(angle), math.sin(angle)
 
-	-- Update last nonzero dx dy
-	if cos ~= 0 or sin ~= 0 then
-		self.tNonZeroDx, self.tNonZeroDy = cos, sin
-	end
+        -- Update last nonzero dx dy
+        if cos ~= 0 or sin ~= 0 then
+            self.tNonZeroDx, self.tNonZeroDy = cos, sin
+        end
 
-	-- Acceleration based off distance to target
-	local accel = math.min(utils.getDistance(circle.x, circle.y, mouseX, mouseY) / Player.bodyAccelDiv, Player.tailAccel)
-    if accel < 0.2 then
-        accel = 0
+        -- Acceleration based off distance to target
+        local accel = math.min(utils.getDistance(circle.x, circle.y, mouseX, mouseY) / Player.bodyAccelDiv, Player.tailAccel)
+        if accel < 0.2 then
+            accel = 0
+        end
+
+        -- Update circle2 position
+        circle.x = circle.x + circle.speed * cos * accel * dt
+        circle.y = circle.y + circle.speed * sin * accel * dt
+
+        self.tailX, self.tailY = circle.x, circle.y
+
+        -- Handle screen collision
+        circle:handleSmoothScreenCollision()
     end
-
-	-- Update circle2 position
-	circle.x = circle.x + circle.speed * cos * accel * dt
-	circle.y = circle.y + circle.speed * sin * accel * dt
-
-    self.tailX, self.tailY = circle.x, circle.y
-
-    -- Handle screen collision
-    circle:handleScreenCollision()
 end
 
 return Player

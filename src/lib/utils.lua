@@ -21,6 +21,14 @@ function utils.normVectors(dx, dy)
     return dx / magnitude, dy / magnitude
 end
 
+function utils.getSourceTargetAngleComponents(sourceX, sourceY, targetX, targetY)
+    local angle = math.atan2(
+        targetY - sourceY,
+        targetX - sourceX
+    )
+    return math.cos(angle), math.sin(angle)
+end
+
 function utils.getSourceTargetAngle(sourceX, sourceY, targetX, targetY)
     local angle = math.atan2(
         targetY - sourceY,
@@ -58,15 +66,6 @@ function utils.easeOutExpo(x)
         return 1
     else
         return 1 - math.pow(2, -10 * x)
-    end
-end
-
--- modified easeInExpo
-function utils.slowDownExpo(x)
-    if x == 0 then
-        return 0
-    else
-        return math.pow(2, 10 * (x / 100) - 10)
     end
 end
 
