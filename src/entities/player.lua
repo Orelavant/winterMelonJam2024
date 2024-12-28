@@ -24,7 +24,10 @@ function Player:new(x, y)
 	self.dy = 0
 	self.nonZeroDx = 0
 	self.nonZeroDy = -1
+    self.head = CircleInit(self.x, self.y, self.dx, self.dy, Player.radius, Player.speed, Player.color)
 	self.chain = {}
+    table.insert(self.chain, self.head)
+    self:initChain()
 end
 
 function Player:update(dt)
@@ -34,15 +37,6 @@ function Player:update(dt)
 	for i,circle in ipairs(self.chain) do
 		-- Update head
 		if i == 1 then
-            -- Normalize vectors to prevent diagonals being faster
-            self.dx, self.dy = utils.normVectors(self.dx, self.dy)
-
-            -- Update circle position
-            self.x = self.x + self.speed * self.dx * dt
-            self.y = self.y + self.speed * self.dy * dt
-
-            circle.x = self.x
-            circle.y = self.y
             circle.dx = self.dx
             circle.dy = self.dy
 			circle:update(dt)
@@ -80,14 +74,11 @@ function Player:constrainCircleToRadius(circle1, circle2, dt)
 end
 
 function Player:initChain()
-	local chain = {}
 	local currChainSpeed = Player.startingChainSpeed
 	local currChainColor = Player.color
 
-    -- Add head
+    -- Consider head
     local chainCount = Player.chainCount - 1
-    local head = CircleInit(self.x, self.y, 0, 0, Player.radius, currChainSpeed, currChainColor)
-    table.insert(chain, head)
 
 	-- Populate chain
 	for i = 1, chainCount do
@@ -99,10 +90,8 @@ function Player:initChain()
 		}
 
 		local circle = CircleInit(100, 100, 0, 0, Player.radius, currChainSpeed, currChainColor)
-		table.insert(chain, circle)
+		table.insert(self.chain, circle)
 	end
-
-	self.chain = chain
 end
 
 function Player:movement()

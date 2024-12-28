@@ -34,7 +34,6 @@ function love.load()
 
     -- Init objs
     Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
-    Player:initChain()
 end
 
 function love.update(dt)
