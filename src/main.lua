@@ -24,20 +24,13 @@ LightBlue  = utils.normRgba(91, 118, 141)
 Pink  = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
--- Attributes
--- love.graphics.setBackgroundColor(darkBlue)
-
 -- Callbacks
 function love.load()
 	-- Init classes
 	PlayerInit = require "entities.player"
-    CircleInit = require "entities.circle"
 
     -- Init objs
-    Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2, 1, 1, playerRadius, playerSpeed, lightBlue)
-    -- for _,circle in Player.chain do
-    --     print(circle.color)
-    -- end
+    Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2, 1, 1)
 end
 
 function love.update(dt)
@@ -49,10 +42,6 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == "space" then
-        Player:constrainCircleToRadius(Circle)
-    end
-
 	-- Reset game
 	if key == "r" then
 		resetGame()

@@ -60,6 +60,9 @@ function Player:movement()
         dx = 0
     end
 
+    -- Normalize vectors to prevent diagonals being faster
+    dx, dy = utils.normVectors(dx, dy)
+
     -- Update last nonzero dx dy
     if dx ~= 0 or dy ~= 0 then
         self.nonZeroDx, self.nonZeroDy = dx, dy
@@ -108,7 +111,7 @@ function Player.initChain()
     for i=1,chainCount do
         currChainSpeed = currChainSpeed - Player.chainSpeedReduction
         currChainColor = {currChainColor[1] - Player.chainColorReduction, currChainColor[2] - Player.chainColorReduction, currChainColor[3] - Player.chainColorReduction}
-        local circle = CircleInit(100, 100, 0, 0, Player.radius, currChainSpeed, currChainColor)
+        local circle = Circle(100, 100, 0, 0, Player.radius, currChainSpeed, currChainColor)
         table.insert(chain, circle)
     end
 
