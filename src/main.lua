@@ -8,37 +8,38 @@ else
 end
 
 -- Imports
-local utils = require "lib.utils"
+local utils = require("lib.utils")
 
 -- Config
 --- @enum gameStates
-GAME_STATES = {play=0, done=1, menu=2}
+GAME_STATES = { play = 0, done = 1, menu = 2 }
 
 ScreenWidth = love.graphics.getWidth()
 ScreenHeight = love.graphics.getHeight()
 
 -- Colors
 -- https://lospec.com/palette-list/coldfire-gb
-DarkBlue  = utils.normRgba(70, 66, 94)
-LightBlue  = utils.normRgba(91, 118, 141)
-Pink  = utils.normRgba(209, 124, 124)
+DarkBlue = utils.normRgba(70, 66, 94)
+LightBlue = utils.normRgba(91, 118, 141)
+Pink = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
 -- Callbacks
 function love.load()
 	-- Init classes
-	PlayerInit = require "entities.player"
+	PlayerInit = require("entities.player")
 
-    -- Init objs
-    Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2, 1, 1)
+	-- Init objs
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
+
 end
 
 function love.update(dt)
-    Player:update(dt)
+	Player:update(dt)
 end
 
 function love.draw()
-    Player:draw()
+	Player:draw()
 end
 
 function love.keypressed(key)

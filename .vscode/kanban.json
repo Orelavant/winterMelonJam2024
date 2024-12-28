@@ -1,0 +1,46 @@
+{
+    "title": "Kanban",
+    "cols": [
+        {
+            "title": "Bugs",
+            "tasks": [
+                {
+                    "text": "Put all circles in chain",
+                    "id": "tyboa50sy8u86u8031hdi2e7"
+                },
+                {
+                    "text": "fix procedural animation",
+                    "id": "ve0fraks1u7loefyt5f65bxj"
+                }
+            ],
+            "id": "nncwu8ck0zw7etpu0dggd61x",
+            "color": "#eb144c"
+        },
+        {
+            "title": "To-Do",
+            "tasks": [
+                {
+                    "text": "Choose diff color pallete",
+                    "id": "h252uram6v17zb93880txw4d"
+                }
+            ],
+            "id": "h2foyzaubqo094docfr9rh7g",
+            "color": "#fcb900"
+        },
+        {
+            "title": "Doing",
+            "tasks": [],
+            "id": "iuqvfox477vr1yocmykdnqq8",
+            "color": "#0693e3"
+        },
+        {
+            "title": "Done",
+            "tasks": [],
+            "id": "c36o1n0kwxkzr4zfmqql6396",
+            "color": "#00d084"
+        }
+    ],
+    "autosave": true,
+    "saveToFile": true,
+    "timestamp": 1735343700440
+}
