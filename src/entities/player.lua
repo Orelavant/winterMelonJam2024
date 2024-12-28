@@ -1,5 +1,5 @@
 -- Imports
-local Object = require "lib.classic"
+local Object = require("lib.classic")
 local CircleInit = require("entities.circle")
 local utils = require("lib.utils")
 
@@ -18,34 +18,34 @@ Player.chainColorReduction = 0.05
 
 ---Constructor
 function Player:new(x, y)
-    -- Head values
+	-- Head values
 	self.x = x
 	self.y = y
 	self.dx = 0
 	self.dy = 0
 	self.nonZeroDx = 0
 	self.nonZeroDy = -1
-    self.head = CircleInit(self.x, self.y, self.dx, self.dy, Player.radius, Player.speed, Player.color)
+	self.head = CircleInit(self.x, self.y, self.dx, self.dy, Player.radius, Player.speed, Player.color)
 
-    -- Create chain
+	-- Create chain
 	self.chain = {}
-    table.insert(self.chain, self.head)
-    self:initChain()
+	table.insert(self.chain, self.head)
+	self:initChain()
 end
 
 function Player:update(dt)
 	-- Get input
 	self:movement()
 
-	for i,circle in ipairs(self.chain) do
+	for i, circle in ipairs(self.chain) do
 		-- Update head
 		if i == 1 then
-            circle.dx = self.dx
-            circle.dy = self.dy
+			circle.dx = self.dx
+			circle.dy = self.dy
 			circle:update(dt)
-        else
-		-- Update circles
-            self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], dt)
+		else
+			-- Update circles
+			self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], dt)
 		end
 	end
 end
@@ -80,8 +80,8 @@ function Player:initChain()
 	local currChainSpeed = Player.startingChainSpeed
 	local currChainColor = Player.color
 
-    -- Consider head
-    local chainCount = Player.chainCount - 1
+	-- Consider head
+	local chainCount = Player.chainCount - 1
 
 	-- Populate chain
 	for i = 1, chainCount do
@@ -117,8 +117,8 @@ function Player:movement()
 		dx = 0
 	end
 
-    -- Normalize vectors to prevent diagonals being faster
-    dx,dy = utils.normVectors(dx, dy)
+	-- Normalize vectors to prevent diagonals being faster
+	dx, dy = utils.normVectors(dx, dy)
 
 	-- Update last nonzero dx dy
 	if dx ~= 0 or dy ~= 0 then
@@ -128,6 +128,5 @@ function Player:movement()
 	-- Update dx, dy
 	self.dx, self.dy = dx, dy
 end
-
 
 return Player
