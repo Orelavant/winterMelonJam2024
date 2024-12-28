@@ -22,8 +22,10 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.tMoveRange = 200
-Player.hooverRange = 100
+Player.inittMoveRange = 150
+Player.initHooverRange = 75
+Player.tMoveRangeAddition = 10
+Player.hooverRangeAddition = 5
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -49,6 +51,8 @@ function Player:new(x, y)
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
     self.tailMoving = false
+    self.tMoveRange = Player.inittMoveRange
+    self.hooverRange = Player.initHooverRange
 
 	-- Create chain
 	self.chain = {}
@@ -62,6 +66,9 @@ function Player:new(x, y)
     self.currBulletStorageSpotRadius = Player.initBulletStorageRadius
     self.currBulletXOffset = self.currBulletStorageSpotRadius * math.cos(self.currBulletStorageSpotAngle)
     self.currBulletYOffset = self.currBulletStorageSpotRadius * math.sin(self.currBulletStorageSpotAngle)
+
+    -- Mod store
+    self.mods = {}
 end
 
 function Player:update(dt)
@@ -86,14 +93,14 @@ function Player:drawChain()
                 "line",
                 circle.x,
                 circle.y,
-                Player.hooverRange
+                self.hooverRange
             )
             if not DebugMode then
                 love.graphics.circle(
                     "line",
                     circle.x,
                     circle.y,
-                    Player.tMoveRange
+                    self.tMoveRange
                 )
             end
         end
@@ -116,13 +123,22 @@ end
 function Player:hoover(dt)
     local mouseX, mouseY = love.mouse.getPosition()
 
+    self:hooverResources(mouseX, mouseY, dt)
+end
+
+function Player:hooverResources(mouseX, mouseY, dt)
+    self:hooverBullets(mouseX, mouseY, dt)
+    self:hooverMods(mouseX, mouseY, dt)
+end
+
+function Player:hooverBullets(mouseX, mouseY, dt)
     for i=#DormantBulletTable,1,-1 do
         local bullet = DormantBulletTable[i]
         local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
         local tailToBulletDist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
 
         -- Bring closer
-        if tailToMouseDist <= Player.hooverRange and tailToBulletDist <= Player.hooverRange then
+        if tailToMouseDist <= self.hooverRange and tailToBulletDist <= self.hooverRange then
             local angle = utils.getSourceTargetAngle(bullet.x, bullet.y, self.tailX, self.tailY)
             local cos,sin = math.cos(angle),math.sin(angle)
             bullet.dx = cos
@@ -132,7 +148,7 @@ function Player:hoover(dt)
 
         -- Remove from global bullet table and put in player table
         tailToBulletDist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
-        if tailToMouseDist <= Player.hooverRange and tailToBulletDist <= Player.consumeRange then
+        if tailToMouseDist <= self.hooverRange and tailToBulletDist <= Player.consumeRange then
             -- Store
             bullet.bulletStorageXOffset = self.currBulletXOffset
             bullet.bulletStorageYOffset = self.currBulletYOffset
@@ -142,6 +158,32 @@ function Player:hoover(dt)
             table.remove(DormantBulletTable, i)
 
             self:handleBulletStorageAnimation()
+        end
+    end
+end
+
+-- Could refactor to reduce duplication with above method
+function Player:hooverMods(mouseX, mouseY, dt)
+    for i=#DormantModTable,1,-1 do
+        local mod = DormantModTable[i]
+        local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
+        local tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
+
+        -- Bring closer
+        if tailToMouseDist <= self.hooverRange and tailToModDist <= self.hooverRange then
+            local angle = utils.getSourceTargetAngle(mod.x, mod.y, self.tailX, self.tailY)
+            local cos,sin = math.cos(angle),math.sin(angle)
+            mod.dx = cos
+            mod.dy = sin
+            mod:hoover(cos, sin, tailToModDist, dt)
+        end
+
+        -- Remove from global mod table and put in player table
+        tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
+        if tailToMouseDist <= self.hooverRange and tailToModDist <= Player.consumeRange then
+            table.insert(self.mods, mod)
+            table.remove(DormantModTable, i)
+            self:addToChain()
         end
     end
 end
@@ -188,7 +230,7 @@ function Player:updateBody(dt)
             end
 
             -- Update back half to follow tail
-            if i > self.headFollowerCount and mouseDist <= Player.tMoveRange then
+            if i > self.headFollowerCount and mouseDist <= self.tMoveRange then
                 self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], -self.tNonZeroDx, -self.tNonZeroDy, dt)
             end
 		end
@@ -225,7 +267,7 @@ function Player:updateHead(circle, dt)
 end
 
 function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
-    if mouseDist <= Player.tMoveRange then
+    if mouseDist <= self.tMoveRange then
         self.tailMoving = true
 
         -- Get angle and angle components to target
@@ -290,6 +332,8 @@ end
 
 function Player:addToChain()
     -- Reinit all vars dependent on chain count
+    self.tMoveRange = self.tMoveRange + Player.tMoveRangeAddition
+    self.hooverRange = self.hooverRange + Player.hooverRangeAddition
     self.chainCount = self.chainCount + 1
     self.headFollowerCount = math.ceil(self.chainCount * Player.headFollowerCountScalar)
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)

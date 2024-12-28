@@ -20,8 +20,8 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Bullet/Module Collecting\n- Collected bullets should show up in the tail",
-                    "id": "u2x9gwhmvhhl1k9ik70klicr"
+                    "text": "Module Collecting\n- Show up as body parts",
+                    "id": "rlmc92qug4s8q4s5tk3yuz5p"
                 },
                 {
                     "text": "Bullet/Module Random Spawning",
@@ -68,8 +68,8 @@
                     "id": "n3d8qrbt8b8uat3nc8djwc43"
                 },
                 {
-                    "text": "Consider revamping movement so that that head is attracted to mouse position and tail is repelled by it for extra theme bonus points. Could be that there's an attraction and repel zone for head and tail, so that players can sit still if they want",
-                    "id": "dcrhyjo4mgy5x8hu7o72yg85"
+                    "text": "Repelling tail can get tricky, consder rework",
+                    "id": "bqr83z43elzxomu06sklazze"
                 },
                 {
                     "text": "Tutorial area, where you have to hoover up some resources, and then shoot the play button",
@@ -107,6 +107,14 @@
                 {
                     "text": "Make a 2 way gradient, so that head and tail look very distinct from one another",
                     "id": "lqtj4ih2tzc3o3s6tdz2n3tx"
+                },
+                {
+                    "text": "Consider revamping movement so that that head is attracted to mouse position and tail is repelled by it for extra theme bonus points. Could be that there's an attraction and repel zone for head and tail, so that players can sit still if they want",
+                    "id": "dcrhyjo4mgy5x8hu7o72yg85"
+                },
+                {
+                    "text": "Bullet Collecting\n- Collected bullets should show up in the tail",
+                    "id": "u2x9gwhmvhhl1k9ik70klicr"
                 }
             ],
             "id": "c36o1n0kwxkzr4zfmqql6396",
@@ -115,5 +123,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735420444686
+    "timestamp": 1735424492993
 }

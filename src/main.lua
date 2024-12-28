@@ -31,11 +31,13 @@ function love.load()
 	-- Init classes
 	PlayerInit = require("entities.player")
     BulletInit = require("entities.bullet")
+    ModInit = require("entities.mod")
 
 	-- Init objs
 	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
     ActiveBulletTable = {}
     DormantBulletTable = {}
+    DormantModTable = {}
 end
 
 function love.update(dt)
@@ -54,12 +56,20 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Dormant Bullets
     for _,bullet in ipairs(DormantBulletTable) do
         bullet:draw()
     end
 
+    -- Dormant Mods
+    for _,mod in ipairs(DormantModTable) do
+        mod:draw()
+    end
+
+    -- Player
 	Player:draw()
 
+    -- Active Bullets
     for _,bullet in ipairs(ActiveBulletTable) do
         bullet:draw()
     end
@@ -86,6 +96,11 @@ function love.keypressed(key)
     if DebugMode and key == "v" then
         Player:addToChain()
     end
+
+    if DebugMode and key == "c" then
+        spawnMod(200+offsetX, 200)
+        offsetX = offsetX + 50
+    end
 end
 
 function love.mousepressed(x, y, button)
@@ -97,6 +112,10 @@ end
 
 function spawnBullet(x, y, color)
     table.insert(DormantBulletTable, BulletInit(x, y, color))
+end
+
+function spawnMod(x, y)
+    table.insert(DormantModTable, ModInit(x, y))
 end
 
 function resetGame()
