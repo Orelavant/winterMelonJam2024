@@ -10,12 +10,11 @@ local Bullet = Circle:extend()
 Bullet.hooverSpeed = 250
 Bullet.shootSpeed = 600
 Bullet.radius = 3
-Bullet.color = Pink
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 
 ---Constructor
-function Bullet:new(x, y)
-    Bullet.super.new(self, x, y, 0, 0, Bullet.radius, Bullet.shootSpeed, Bullet.color, Bullet.screenColType)
+function Bullet:new(x, y, color)
+    Bullet.super.new(self, x, y, 0, 0, Bullet.radius, Bullet.shootSpeed, color, Bullet.screenColType)
 end
 
 function Bullet:hoover(cos, sin, dist, dt)

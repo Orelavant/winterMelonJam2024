@@ -1,7 +1,6 @@
 -- Debugger
 if arg[2] == "debug" then
 	DebugMode = true
-	print(arg[2])
 	require("lldebugger").start()
 else
 	DebugMode = false
@@ -76,7 +75,7 @@ function love.keypressed(key)
     if DebugMode and key == "b" then
         for i=1,5 do
             for j=1,50 do
-                spawnBullet(100+offsetX, 100+offsetY)
+                spawnBullet(100+offsetX, 100+offsetY, DarkBlue)
                 offsetX = offsetX + 10
             end
             offsetY = offsetY + 10
@@ -96,8 +95,8 @@ function love.mousepressed(x, y, button)
     end
 end
 
-function spawnBullet(x, y)
-    table.insert(DormantBulletTable, BulletInit(x, y))
+function spawnBullet(x, y, color)
+    table.insert(DormantBulletTable, BulletInit(x, y, color))
 end
 
 function resetGame()

@@ -14,12 +14,12 @@ Player.hChainColorAddition = 0.1
 Player.tColor = Orange
 Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
-Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
+Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 32)
 Player.tailRangeDiv = 5
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.tMoveRange = 200
+Player.tMoveRange = 100
 Player.hooverRange = 100
 Player.consumeRange = 20
 
@@ -38,8 +38,8 @@ function Player:new(x, y)
 	self.hNonZeroDy = -1
 
     -- Tail vars
-	self.tailX = x
-	self.tailY = y
+	self.tailX = 0
+	self.tailY = 0
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
 
@@ -54,6 +54,8 @@ end
 function Player:update(dt)
     self:updateBody(dt)
     self:hoover(dt)
+    print(self.tailX)
+    print(self.tailY)
 end
 
 function Player:draw()
@@ -108,6 +110,7 @@ function Player:shoot(mouseX, mouseY)
         local cos,sin = utils.getSourceTargetAngleComponents(self.hX, self.hY, mouseX, mouseY)
         bullet.x = self.hX
         bullet.y = self.hY
+        bullet.color = LightBlue
         bullet.dx = cos
         bullet.dy = sin
 
