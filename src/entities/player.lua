@@ -7,13 +7,13 @@ local utils = require("lib.utils")
 local Player = Object:extend()
 
 -- Config
-Player.radius = 25
+Player.radius = 15
 Player.speed = 250
 Player.color = Orange
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
-Player.hooverRadius = 25
+Player.hooverDist = 100
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.chainColorAddition = 0.05
@@ -68,7 +68,19 @@ function Player:draw()
 		circle:draw()
 
         if i == #self.chain then
-            love.graphics.circle("line", circle.x, circle.y, Player.hooverRadius)
+            love.graphics.setColor({1, 1, 1})
+            love.graphics.circle(
+                "line",
+                circle.x,
+                circle.y,
+                Player.hooverDist
+            )
+            love.graphics.polygon(
+                "line",
+                circle.x, circle.y,
+                circle.x + 50, circle.y + Player.hooverDist * self.tNonZeroDy,
+                circle.x - 50, circle.y + Player.hooverDist * self.tNonZeroDy
+            )
         end
 	end
 end

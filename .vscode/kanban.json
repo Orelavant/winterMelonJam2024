@@ -16,6 +16,10 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "When hoovering, the closer you are to resources, the faster they get hoovered, the farther the slower it is",
+                    "id": "undtqcgag2syp5eyu5evzubj"
+                },
+                {
                     "text": "You collect the modules over time",
                     "id": "c3a6srjrct4txofmfpfhto0v"
                 },
@@ -26,6 +30,10 @@
                 {
                     "text": "Make a 2 way gradient, so that head and tail look very distinct from one another",
                     "id": "lqtj4ih2tzc3o3s6tdz2n3tx"
+                },
+                {
+                    "text": "Draw a mesh along the circles edges and color that instead of all the individual circles",
+                    "id": "a885epprynhu9tmm0a5g5040"
                 },
                 {
                     "text": "Choose diff color pallete, one that shows up well against the black.",
@@ -59,5 +67,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735356411334
+    "timestamp": 1735357862950
 }
