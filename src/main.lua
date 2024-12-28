@@ -60,7 +60,7 @@ function love.keypressed(key)
         offsetX = offsetX + 10
     end
 
-    if DebugMode and key == "space" then
+    if DebugMode and key == "v" then
         Player:addToChain()
     end
 end

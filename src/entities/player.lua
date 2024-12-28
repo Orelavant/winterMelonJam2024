@@ -16,36 +16,62 @@ Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
-Player.hooverDist = 100
+Player.hooverDist = 75
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 
 ---Constructor
 function Player:new(x, y)
+    -- Body vars
     self.chainCount = Player.chainCount
     self.headFollowerCount = math.ceil(self.chainCount * 0.4)
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
-	-- Head values
+	-- Head vars
 	self.hX = x
 	self.hY = y
 	self.hNonZeroDx = 0
 	self.hNonZeroDy = -1
 
-    -- Tail values
-	self.tX = x
-	self.tY = y
+    -- Tail vars
+	self.tailX = x
+	self.tailY = y
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
 
 	-- Create chain
 	self.chain = {}
 	self:initChain()
+
+    -- Bullet store
+    self.bullets = {}
 end
 
 function Player:update(dt)
+    self:updateBody(dt)
+    self:hoover(dt)
+end
+
+function Player:draw()
+	-- Draw circles
+	for i, circle in ipairs(self.chain) do
+		circle:draw()
+
+        if i == #self.chain then
+            love.graphics.setColor({1, 1, 1})
+            love.graphics.circle(
+                "line",
+                circle.x,
+                circle.y,
+                Player.hooverDist
+            )
+        end
+	end
+end
+
+function Player:updateBody(dt)
     -- Update front half to follow head
 	for i=1,#self.chain do
         if i == 1 then
@@ -64,21 +90,18 @@ function Player:update(dt)
 	end
 end
 
-function Player:draw()
-	-- Draw circles
-	for i, circle in ipairs(self.chain) do
-		circle:draw()
+function Player:hoover(dt)
+    if love.keyboard.isDown("space") then
+        for i=#BulletTable,1,-1 do
+            local bullet = BulletTable[i]
 
-        if i == #self.chain then
-            love.graphics.setColor({1, 1, 1})
-            love.graphics.circle(
-                "line",
-                circle.x,
-                circle.y,
-                Player.hooverDist
-            )
+            -- Remove from global bullet table and put in player table
+            if utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y) <= self.hooverDist then
+                table.insert(self.bullets, BulletTable[i])
+                table.remove(BulletTable, i)
+            end
         end
-	end
+    end
 end
 
 function Player:constrainCircleToRadius(circle1, circle2, nonZeroDx, nonZeroDy, dt)
@@ -160,7 +183,7 @@ function Player:initChain()
             currChainColor = currtChainColor
         end
 
-		local circle = CircleInit(self.tX, self.tY, 0, 0, Player.radius, currChainSpeed, currChainColor)
+		local circle = CircleInit(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)
 		table.insert(self.chain, circle)
 	end
 end
@@ -226,7 +249,7 @@ function Player:updateTail(circle, dt)
 	circle.x = circle.x + circle.speed * cos * accel * dt
 	circle.y = circle.y + circle.speed * sin * accel * dt
 
-    self.tX, self.tY = circle.x, circle.y
+    self.tailX, self.tailY = circle.x, circle.y
 
     -- Handle screen collision
     circle:handleScreenCollision()
