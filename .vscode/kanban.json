@@ -5,6 +5,10 @@
             "title": "Bugs",
             "tasks": [
                 {
+                    "text": "Fix how there is one bullet stored in a weird spot (has to do with the starting position of the storage I think)",
+                    "id": "z2ainewatmpyohepckox8d3y"
+                },
+                {
                     "text": "fix procedural animation\n- -- Test going from back to front, previosuly it had some strange behavior",
                     "id": "ve0fraks1u7loefyt5f65bxj"
                 }
@@ -16,12 +20,12 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Bullet/Module Random Spawning",
-                    "id": "zqxy6lyzy6t5702irvqrwpik"
-                },
-                {
                     "text": "Bullet/Module Collecting\n- Collected bullets should show up in the tail",
                     "id": "u2x9gwhmvhhl1k9ik70klicr"
+                },
+                {
+                    "text": "Bullet/Module Random Spawning",
+                    "id": "zqxy6lyzy6t5702irvqrwpik"
                 },
                 {
                     "text": "When hoovering, the closer you are to resources, the faster they get hoovered, the farther the slower it is",
@@ -111,5 +115,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735407670706
+    "timestamp": 1735420444686
 }

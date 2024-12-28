@@ -1,6 +1,7 @@
 -- Imports
 local Object = require("lib.classic")
 local CircleInit = require("entities.circle")
+local Bullet = require("entities.bullet")
 local utils = require("lib.utils")
 
 ---@class Player
@@ -22,6 +23,9 @@ Player.clampBuffer = 1
 Player.tMoveRange = 100
 Player.hooverRange = 100
 Player.consumeRange = 20
+Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
+Player.bulletStorageDegreeChange = 10
+Player.bulletStorageColorOffset = 0.002
 
 ---Constructor
 function Player:new(x, y)
@@ -38,8 +42,8 @@ function Player:new(x, y)
 	self.hNonZeroDy = -1
 
     -- Tail vars
-	self.tailX = 0
-	self.tailY = 0
+	self.tailX = x
+	self.tailY = y
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
 
@@ -49,18 +53,28 @@ function Player:new(x, y)
 
     -- Bullet store
     self.bullets = {}
+    self.bulletStorageColor = LightBlue
+    self.currBulletStorageDegrees = 270
+    self.currBulletStorageSpotAngle = math.rad(self.currBulletStorageDegrees)
+    self.currBulletStorageSpotRadius = Player.initBulletStorageRadius
+    self.currBulletXOffset = self.currBulletStorageSpotRadius * math.cos(self.currBulletStorageSpotAngle)
+    self.currBulletYOffset = self.currBulletStorageSpotRadius * math.sin(self.currBulletStorageSpotAngle)
 end
 
 function Player:update(dt)
     self:updateBody(dt)
     self:hoover(dt)
-    print(self.tailX)
-    print(self.tailY)
+    self:updateBullets(dt)
 end
 
 function Player:draw()
-	-- Draw circles
-	for i, circle in ipairs(self.chain) do
+    self:drawChain()
+    self:drawBullets()
+end
+
+function Player:drawChain()
+	-- Draw chain
+	for i,circle in ipairs(self.chain) do
 		circle:draw()
 
         if DebugMode and i == #self.chain then
@@ -81,24 +95,48 @@ function Player:draw()
 	end
 end
 
+function Player:updateBullets(dt)
+    for _,bullet in ipairs(self.bullets) do
+        bullet:storageUpdate(self.tailX, self.tailY, dt)
+    end
+end
+
+function Player:drawBullets()
+    -- "Store" bullets in tail, includes shrinking them
+    for _,bullet in ipairs(self.bullets) do
+        bullet:storageDraw()
+    end
+end
+
 function Player:hoover(dt)
+    local mouseX, mouseY = love.mouse.getPosition()
+
     for i=#DormantBulletTable,1,-1 do
         local bullet = DormantBulletTable[i]
-        local dist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
+        local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
+        local tailToBulletDist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
 
         -- Bring closer
-        if dist <= Player.hooverRange then
+        if tailToMouseDist <= Player.hooverRange and tailToBulletDist <= Player.hooverRange then
             local angle = utils.getSourceTargetAngle(bullet.x, bullet.y, self.tailX, self.tailY)
             local cos,sin = math.cos(angle),math.sin(angle)
             bullet.dx = cos
             bullet.dy = sin
-            bullet:hoover(cos, sin, dist, dt)
+            bullet:hoover(cos, sin, tailToBulletDist, dt)
         end
 
         -- Remove from global bullet table and put in player table
-        if dist <= Player.consumeRange then
+        tailToBulletDist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
+        if tailToMouseDist <= Player.hooverRange and tailToBulletDist <= Player.consumeRange then
+            -- Store
+            bullet.bulletStorageXOffset = self.currBulletXOffset
+            bullet.bulletStorageYOffset = self.currBulletYOffset
+            bullet.color = self.bulletStorageColor
             table.insert(self.bullets, bullet)
+
             table.remove(DormantBulletTable, i)
+
+            self:handleBulletStorageAnimation()
         end
     end
 end
@@ -110,7 +148,7 @@ function Player:shoot(mouseX, mouseY)
         local cos,sin = utils.getSourceTargetAngleComponents(self.hX, self.hY, mouseX, mouseY)
         bullet.x = self.hX
         bullet.y = self.hY
-        bullet.color = LightBlue
+        bullet.radius = Bullet.radius
         bullet.dx = cos
         bullet.dy = sin
 
@@ -137,6 +175,12 @@ function Player:updateBody(dt)
         else
             -- Update to follow head
             self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], self.hNonZeroDx, self.hNonZeroDy, dt)
+
+            -- Update tail vars
+            if self.chain[i] == tail then
+                self.tailX = tail.x
+                self.tailY = tail.y
+            end
 
             -- Update back half to follow tail
             if i > self.headFollowerCount and mouseDist <= Player.tMoveRange then
@@ -205,6 +249,7 @@ function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
         circle.x = circle.x + circle.speed * cos * accel * dt
         circle.y = circle.y + circle.speed * sin * accel * dt
 
+        -- Update player vars
         self.tailX, self.tailY = circle.x, circle.y
 
         -- Handle screen collision
@@ -296,5 +341,41 @@ function Player:initChain()
 	end
 end
 
+-- Pretend you have a shrinking circle everytime you store a bullet
+-- Store bullets along that shrinking circle, until that circle is the size of a bullet
+-- Then change the angle of where you're storing, and repeat
+function Player:handleBulletStorageAnimation()
+    -- Shrink circle
+    self.currBulletStorageSpotRadius = self.currBulletStorageSpotRadius - Bullet.bulletRadiusStorageSize
+    self.currBulletXOffset = self.currBulletStorageSpotRadius * math.cos(self.currBulletStorageSpotAngle)
+    self.currBulletYOffset = self.currBulletStorageSpotRadius * math.sin(self.currBulletStorageSpotAngle)
+
+    -- Circle too small, change angle and reset to new angle
+    if self.currBulletStorageSpotRadius <= Bullet.bulletRadiusStorageSize then
+        -- Get new angle
+        if self.currBulletStorageDegrees >= 0 and self.currBulletStorageDegrees < 360 then
+            self.currBulletStorageDegrees = self.currBulletStorageDegrees + Player.bulletStorageDegreeChange
+            self.currBulletStorageSpotAngle = math.rad(self.currBulletStorageDegrees)
+        elseif self.currBulletStorageDegrees == 360 then
+            self.currBulletStorageDegrees = 0
+            self.currBulletStorageSpotAngle = math.rad(self.currBulletStorageDegrees)
+        else
+            -- Only triggers due to the initial degrees being 90
+            self.currBulletStorageDegrees = self.currBulletStorageDegrees + Player.bulletStorageDegreeChange
+            self.currBulletStorageSpotAngle = math.rad(self.currBulletStorageDegrees)
+        end
+
+        -- Get new radius and change color gradient
+        self.currBulletStorageSpotRadius = Player.initBulletStorageRadius - Bullet.bulletRadiusStorageSize
+        local cos,sin = math.cos(self.currBulletStorageSpotAngle), math.sin(self.currBulletStorageSpotAngle)
+        self.currBulletXOffset = Player.radius * cos
+        self.currBulletYOffset = Player.radius * sin
+        self.bulletStorageColor = {
+            self.bulletStorageColor[1] + self.bulletStorageColorOffset,
+            self.bulletStorageColor[2] + self.bulletStorageColorOffset,
+            self.bulletStorageColor[3] + self.bulletStorageColorOffset
+        }
+    end
+end
 
 return Player
