@@ -15,12 +15,12 @@ Player.hChainColorAddition = 0.1
 Player.tColor = Orange
 Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
-Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 32)
+Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.tMoveRange = 100
+Player.tMoveRange = 175
 Player.hooverRange = 100
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
@@ -46,6 +46,7 @@ function Player:new(x, y)
 	self.tailY = y
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
+    self.tailMoving = false
 
 	-- Create chain
 	self.chain = {}
@@ -77,20 +78,22 @@ function Player:drawChain()
 	for i,circle in ipairs(self.chain) do
 		circle:draw()
 
-        if DebugMode and i == #self.chain then
-            love.graphics.setColor({1, 1, 1})
+        if i == #self.chain then
+            love.graphics.setColor({1, 1, 1, 0.3})
             love.graphics.circle(
                 "line",
                 circle.x,
                 circle.y,
                 Player.hooverRange
             )
-            love.graphics.circle(
-                "line",
-                circle.x,
-                circle.y,
-                Player.tMoveRange
-            )
+            if not DebugMode then
+                love.graphics.circle(
+                    "line",
+                    circle.x,
+                    circle.y,
+                    Player.tMoveRange
+                )
+            end
         end
 	end
 end
@@ -191,57 +194,50 @@ function Player:updateBody(dt)
 end
 
 function Player:updateHead(circle, dt)
-	local dx, dy
+    if not self.tailMoving then
+        -- Target mousePosition
+        local mouseX, mouseY = love.mouse.getPosition()
+        local dx, dy = utils.getSourceTargetAngleComponents(circle.x, circle.y, mouseX, mouseY)
+        local mouseDist = utils.getDistance(circle.x, circle.y, mouseX, mouseY)
 
-	-- Input to Movement
-	if love.keyboard.isDown("w") then
-		dy = -1
-	elseif love.keyboard.isDown("s") then
-		dy = 1
-	else
-		dy = 0
-	end
+        -- Update last nonzero dx dy
+        if dx ~= 0 or dy ~= 0 then
+            self.hNonZeroDx, self.hNonZeroDy = dx, dy
+        end
 
-	if love.keyboard.isDown("d") then
-		dx = 1
-	elseif love.keyboard.isDown("a") then
-		dx = -1
-	else
-		dx = 0
-	end
+        -- Acceleration based off distance to target
+        local accel = math.min(mouseDist / Player.bodyAccelDiv, Player.tailAccel)
+        if accel < 0.5 then
+            accel = 0
+        end
 
-	-- Normalize vectors to prevent diagonals being faster
-	dx, dy = utils.normVectors(dx, dy)
+        -- Update dx, dy
+        circle.dx, circle.dy = dx, dy
 
-	-- Update last nonzero dx dy
-	if dx ~= 0 or dy ~= 0 then
-		self.hNonZeroDx, self.hNonZeroDy = dx, dy
-	end
+        -- Update circle
+        circle:update(dt)
 
-	-- Update dx, dy
-	circle.dx, circle.dy = dx, dy
-
-    -- Update circle
-    circle:update(dt)
-
-    -- Update location of head
-    self.hX, self.hY = circle.x, circle.y
+        -- Update location of head
+        self.hX, self.hY = circle.x, circle.y
+    end
 end
 
 function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
     if mouseDist <= Player.tMoveRange then
+        self.tailMoving = true
+
         -- Get angle and angle components to target
         local angle = utils.getSourceTargetAngle(circle.x, circle.y, mouseX, mouseY)
         local cos, sin = math.cos(angle), math.sin(angle)
 
         -- Update last nonzero dx dy
         if cos ~= 0 or sin ~= 0 then
-            self.tNonZeroDx, self.tNonZeroDy = cos, sin
+            self.tNonZeroDx, self.tNonZeroDy = -cos, -sin
         end
 
         -- Acceleration based off distance to target
         local accel = math.min(mouseDist / Player.bodyAccelDiv, Player.tailAccel)
-        if accel < 0.2 then
+        if accel < 0.5 then
             accel = 0
         end
 
@@ -254,6 +250,8 @@ function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
 
         -- Handle screen collision
         circle:handleSmoothScreenCollision()
+    else
+        self.tailMoving = false
     end
 end
 
