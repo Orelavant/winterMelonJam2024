@@ -10,17 +10,19 @@ local Player = Object:extend()
 -- Config
 Player.radius = 15
 Player.speed = 175
+Player.headFollowerCountScalar = 0.4
+Player.initChainCount = 2
+Player.initHeadFollowerCount = math.ceil(Player.initChainCount * Player.headFollowerCountScalar)
 Player.hColor = DarkBlue
-Player.hChainColorAddition = 0.1
+Player.hChainColorAddition = 0.05
 Player.tColor = Orange
-Player.tChainColorReduction = 0.1
+Player.tChainColorReduction = 0.05
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
-Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.tMoveRange = 175
+Player.tMoveRange = 200
 Player.hooverRange = 100
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
@@ -30,8 +32,8 @@ Player.bulletStorageColorOffset = 0.002
 ---Constructor
 function Player:new(x, y)
     -- Body vars
-    self.chainCount = Player.chainCount
-    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
+    self.chainCount = Player.initChainCount
+    self.headFollowerCount = Player.initHeadFollowerCount
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
@@ -207,7 +209,7 @@ function Player:updateHead(circle, dt)
 
         -- Acceleration based off distance to target
         local accel = math.min(mouseDist / Player.bodyAccelDiv, Player.tailAccel)
-        if accel < 0.5 then
+        if accel < 0.1 then
             accel = 0
         end
 
@@ -289,7 +291,7 @@ end
 function Player:addToChain()
     -- Reinit all vars dependent on chain count
     self.chainCount = self.chainCount + 1
-    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
+    self.headFollowerCount = math.ceil(self.chainCount * Player.headFollowerCountScalar)
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
