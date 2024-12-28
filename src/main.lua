@@ -47,6 +47,10 @@ function love.keypressed(key)
 	if key == "r" then
 		resetGame()
 	end
+
+    if DebugMode and key == "space" then
+        Player:addToChain()
+    end
 end
 
 function resetGame()

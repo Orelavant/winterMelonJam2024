@@ -15,15 +15,16 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.hooverRadius = 25
 Player.chainCount = 2
-Player.headFollowerCount = math.ceil(Player.chainCount * 0.4)
 Player.startingChainSpeed = 1500
-Player.chainSpeedReduction = (Player.startingChainSpeed / Player.chainCount)
-Player.chainSpeedReductionOffset = (150 / Player.chainCount) + (Player.radius / 5)
 Player.chainColorAddition = 0.05
+Player.clampBuffer = 1
 
 ---Constructor
 function Player:new(x, y)
     self.chainCount = Player.chainCount
+    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
+    self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
+    self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
 	-- Head values
 	self.hX = x
@@ -32,6 +33,8 @@ function Player:new(x, y)
 	self.hNonZeroDy = -1
 
     -- Tail values
+	self.tX = x
+	self.tY = y
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
 
@@ -52,7 +55,7 @@ function Player:update(dt)
             self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], self.hNonZeroDx, self.hNonZeroDy, dt)
 
             -- Update back half to follow tail
-            if i > Player.headFollowerCount then
+            if i > self.headFollowerCount then
                 self:constrainCircleToRadius(self.chain[i - 1], self.chain[i], -self.tNonZeroDx, -self.tNonZeroDy, dt)
             end
 		end
@@ -86,10 +89,9 @@ function Player:constrainCircleToRadius(circle1, circle2, nonZeroDx, nonZeroDy, 
 	circle2.x = circle2.x + circle2.speed * cos * accel * dt
 	circle2.y = circle2.y + circle2.speed * sin * accel * dt
 
-    -- TODO
     -- Clamp distance between circles
     local dist = utils.getDistance(circle1.x, circle1.y, circle2.x, circle2.y)
-    if dist + 1 < circle1.radius + 0 then
+    if dist + Player.clampBuffer < circle1.radius + 0 then
         local dx, dy = circle2.x - circle1.x, circle2.y - circle1.y
         local clampX, clampY = dx / dist, dy / dist
 		circle2.x = circle1.x + circle1.radius * clampX
@@ -103,11 +105,14 @@ function Player:constrainCircleToRadius(circle1, circle2, nonZeroDx, nonZeroDy, 
 end
 
 function Player:initChain()
+    -- Reset chain
+    self.chain = {}
+
 	local currChainSpeed = Player.startingChainSpeed
 	local currChainColor = Player.color
 
 	-- Consider head and tail
-	local chainCount = Player.chainCount - 2
+	local chainCount = self.chainCount - 2
 
     -- Add head
 	self.head = CircleInit(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.color)
@@ -115,20 +120,21 @@ function Player:initChain()
 
 	-- Populate chain
 	for i = 1, chainCount do
-		currChainSpeed = currChainSpeed - Player.chainSpeedReduction + Player.chainSpeedReductionOffset * i
+		currChainSpeed = currChainSpeed - self.chainSpeedReduction + self.chainSpeedReductionOffset * i
 		currChainColor = {
 			currChainColor[1] + Player.chainColorAddition,
 			currChainColor[2] + Player.chainColorAddition,
 			currChainColor[3] + Player.chainColorAddition,
 		}
 
-		local circle = CircleInit(100, 100, 0, 0, Player.radius, currChainSpeed, currChainColor)
+        print(self.hX, self.hY)
+		local circle = CircleInit(self.tX, self.tY, 0, 0, Player.radius, currChainSpeed, currChainColor)
 		table.insert(self.chain, circle)
 	end
 
     -- Add tail
     self.tailSpeed = currChainSpeed
-    self.tail = CircleInit(0, 0, 0, 0, Player.radius, currChainSpeed, currChainColor)
+    self.tail = CircleInit(self.tX, self.tY, 0, 0, Player.radius, currChainSpeed, currChainColor)
     table.insert(self.chain, self.tail)
 end
 
@@ -165,6 +171,9 @@ function Player:updateHead(circle, dt)
 
     -- Update circle
     circle:update(dt)
+
+    -- Update location of head
+    self.hX, self.hY = circle.x, circle.y
 end
 
 function Player:updateTail(circle, dt)
@@ -190,8 +199,21 @@ function Player:updateTail(circle, dt)
 	circle.x = circle.x + circle.speed * cos * accel * dt
 	circle.y = circle.y + circle.speed * sin * accel * dt
 
+    self.tX, self.tY = circle.x, circle.y
+
     -- Handle screen collision
     circle:handleScreenCollision()
 end
+
+function Player:addToChain()
+    -- Reinit all vars dependent on chain count
+    self.chainCount = self.chainCount + 1
+    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
+    self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
+    self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
+
+    self:initChain()
+end
+
 
 return Player
