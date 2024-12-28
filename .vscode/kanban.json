@@ -5,15 +5,7 @@
             "title": "Bugs",
             "tasks": [
                 {
-                    "text": "Have the circles also push against each other so they don't collapse on each other",
-                    "id": "pwf8fl9f61mlooiivrnzfcs3"
-                },
-                {
-                    "text": "Put all circles in chain",
-                    "id": "tyboa50sy8u86u8031hdi2e7"
-                },
-                {
-                    "text": "fix procedural animation",
+                    "text": "fix procedural animation\n- -- Test going from back to front, previosuly it had some strange behavior",
                     "id": "ve0fraks1u7loefyt5f65bxj"
                 }
             ],
@@ -51,12 +43,21 @@
         },
         {
             "title": "Done",
-            "tasks": [],
+            "tasks": [
+                {
+                    "text": "Put all circles in chain",
+                    "id": "tyboa50sy8u86u8031hdi2e7"
+                },
+                {
+                    "text": "Have the circles also push against each other so they don't collapse on each other",
+                    "id": "pwf8fl9f61mlooiivrnzfcs3"
+                }
+            ],
             "id": "c36o1n0kwxkzr4zfmqql6396",
             "color": "#00d084"
         }
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735347888466
+    "timestamp": 1735356411334
 }
