@@ -28,6 +28,8 @@ end
 
 function Circle:draw()
     love.graphics.setColor(self.color)
+	love.graphics.circle("fill", self.x, self.y, self.radius)
+    love.graphics.setColor({0, 0, 0})
 	love.graphics.circle("line", self.x, self.y, self.radius)
 end
 
