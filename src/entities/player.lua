@@ -8,15 +8,17 @@ local Player = Object:extend()
 
 -- Config
 Player.radius = 15
-Player.speed = 250
-Player.color = Orange
+Player.speed = 175
+Player.hColor = DarkBlue
+Player.hChainColorAddition = 0.1
+Player.tColor = Orange
+Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.hooverDist = 100
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
-Player.chainColorAddition = 0.05
 Player.clampBuffer = 1
 
 ---Constructor
@@ -75,12 +77,6 @@ function Player:draw()
                 circle.y,
                 Player.hooverDist
             )
-            love.graphics.polygon(
-                "line",
-                circle.x, circle.y,
-                circle.x + 50, circle.y + Player.hooverDist * self.tNonZeroDy,
-                circle.x - 50, circle.y + Player.hooverDist * self.tNonZeroDy
-            )
         end
 	end
 end
@@ -116,38 +112,57 @@ function Player:constrainCircleToRadius(circle1, circle2, nonZeroDx, nonZeroDy, 
 	return circle2
 end
 
+function Player:addToChain()
+    -- Reinit all vars dependent on chain count
+    self.chainCount = self.chainCount + 1
+    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
+    self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
+    self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
+
+    self:initChain()
+end
+
 function Player:initChain()
     -- Reset chain
     self.chain = {}
 
 	local currChainSpeed = Player.startingChainSpeed
-	local currChainColor = Player.color
+	local currhChainColor = Player.hColor
+	local currtChainColor = Player.tColor
 
 	-- Consider head and tail
-	local chainCount = self.chainCount - 2
+	local chainCount = self.chainCount - 1
 
     -- Add head
-	self.head = CircleInit(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.color)
+	self.head = CircleInit(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)
     table.insert(self.chain, self.head)
 
 	-- Populate chain
 	for i = 1, chainCount do
-		currChainSpeed = currChainSpeed - self.chainSpeedReduction + self.chainSpeedReductionOffset * i
-		currChainColor = {
-			currChainColor[1] + Player.chainColorAddition,
-			currChainColor[2] + Player.chainColorAddition,
-			currChainColor[3] + Player.chainColorAddition,
-		}
+        currChainSpeed = currChainSpeed - self.chainSpeedReduction + self.chainSpeedReductionOffset * i
 
-        print(self.hX, self.hY)
+        -- Head color gradient
+        local currChainColor = currhChainColor
+        if i <= math.floor(chainCount / 2 ) then
+            currhChainColor = {
+                currhChainColor[1] + Player.hChainColorAddition,
+                currhChainColor[2] + Player.hChainColorAddition,
+                currhChainColor[3] + Player.hChainColorAddition,
+            }
+            currChainColor = currhChainColor
+        else
+        -- Tail color gradient
+            currtChainColor = {
+                currtChainColor[1] - Player.tChainColorReduction,
+                currtChainColor[2] - Player.tChainColorReduction,
+                currtChainColor[3] - Player.tChainColorReduction,
+            }
+            currChainColor = currtChainColor
+        end
+
 		local circle = CircleInit(self.tX, self.tY, 0, 0, Player.radius, currChainSpeed, currChainColor)
 		table.insert(self.chain, circle)
 	end
-
-    -- Add tail
-    self.tailSpeed = currChainSpeed
-    self.tail = CircleInit(self.tX, self.tY, 0, 0, Player.radius, currChainSpeed, currChainColor)
-    table.insert(self.chain, self.tail)
 end
 
 function Player:updateHead(circle, dt)
@@ -216,16 +231,5 @@ function Player:updateTail(circle, dt)
     -- Handle screen collision
     circle:handleScreenCollision()
 end
-
-function Player:addToChain()
-    -- Reinit all vars dependent on chain count
-    self.chainCount = self.chainCount + 1
-    self.headFollowerCount = math.ceil(self.chainCount * 0.4)
-    self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
-    self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
-
-    self:initChain()
-end
-
 
 return Player
