@@ -20,7 +20,7 @@
                     "id": "zqxy6lyzy6t5702irvqrwpik"
                 },
                 {
-                    "text": "Bullet/Module Collecting\n",
+                    "text": "Bullet/Module Collecting\n- Collected bullets should show up in the tail",
                     "id": "u2x9gwhmvhhl1k9ik70klicr"
                 },
                 {
@@ -107,5 +107,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735360936387
+    "timestamp": 1735362022121
 }
