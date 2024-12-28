@@ -24,9 +24,6 @@ LightBlue = utils.normRgba(91, 118, 141)
 Pink = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
--- Attributes
--- love.graphics.setBackgroundColor(darkBlue)
-
 -- Callbacks
 function love.load()
 	-- Init classes
@@ -34,6 +31,7 @@ function love.load()
 
 	-- Init objs
 	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
+
 end
 
 function love.update(dt)
