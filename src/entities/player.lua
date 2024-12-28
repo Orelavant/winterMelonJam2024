@@ -13,11 +13,12 @@ Player.color = LightBlue
 Player.accelDiv = 100
 Player.chainCount = 5
 Player.startingChainSpeed = 1500
-Player.chainSpeedReduction = 200
+Player.chainSpeedReduction = 150
 Player.chainColorReduction = 0.05
 
 ---Constructor
 function Player:new(x, y)
+    -- Head values
 	self.x = x
 	self.y = y
 	self.dx = 0
@@ -25,6 +26,8 @@ function Player:new(x, y)
 	self.nonZeroDx = 0
 	self.nonZeroDy = -1
     self.head = CircleInit(self.x, self.y, self.dx, self.dy, Player.radius, Player.speed, Player.color)
+
+    -- Create chain
 	self.chain = {}
     table.insert(self.chain, self.head)
     self:initChain()
@@ -113,6 +116,9 @@ function Player:movement()
 	else
 		dx = 0
 	end
+
+    -- Normalize vectors to prevent diagonals being faster
+    dx,dy = utils.normVectors(dx, dy)
 
 	-- Update last nonzero dx dy
 	if dx ~= 0 or dy ~= 0 then
