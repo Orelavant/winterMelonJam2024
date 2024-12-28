@@ -55,15 +55,16 @@ function love.update(dt)
 end
 
 function love.draw()
-    for _,bullet in ipairs(ActiveBulletTable) do
-        bullet:draw()
-    end
-
     for _,bullet in ipairs(DormantBulletTable) do
         bullet:draw()
     end
 
 	Player:draw()
+
+    for _,bullet in ipairs(ActiveBulletTable) do
+        bullet:draw()
+    end
+
 end
 
 function love.keypressed(key)
