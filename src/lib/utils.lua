@@ -43,4 +43,31 @@ function utils.getDistance(x1, y1, x2, y2)
     return distance
 end
 
+-- https://easings.net/#easeInExpo
+function utils.easeInExpo(x)
+    if x == 0 then
+        return 0
+    else
+        return math.pow(2, 10 * x - 10)
+    end
+end
+
+-- https://easings.net/#easeOutExpo
+function utils.easeOutExpo(x)
+    if x == 1 then
+        return 1
+    else
+        return 1 - math.pow(2, -10 * x)
+    end
+end
+
+-- modified easeInExpo
+function utils.slowDownExpo(x)
+    if x == 0 then
+        return 0
+    else
+        return math.pow(2, 10 * (x / 100) - 10)
+    end
+end
+
 return utils

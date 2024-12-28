@@ -16,10 +16,11 @@ Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
-Player.hooverDist = 50
 Player.chainCount = 2
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
+Player.hooverRange = 100
+Player.consumeRange = 20
 
 ---Constructor
 function Player:new(x, y)
@@ -65,7 +66,7 @@ function Player:draw()
                 "line",
                 circle.x,
                 circle.y,
-                Player.hooverDist
+                Player.hooverRange
             )
         end
 	end
@@ -91,15 +92,23 @@ function Player:updateBody(dt)
 end
 
 function Player:hoover(dt)
-    if love.keyboard.isDown("space") then
-        for i=#BulletTable,1,-1 do
-            local bullet = BulletTable[i]
+    for i=#BulletTable,1,-1 do
+        local bullet = BulletTable[i]
+        local dist = utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y)
 
-            -- Remove from global bullet table and put in player table
-            if utils.getDistance(self.tailX, self.tailY, bullet.x, bullet.y) <= self.hooverDist then
-                table.insert(self.bullets, BulletTable[i])
-                table.remove(BulletTable, i)
-            end
+        -- Bring closer
+        if dist <= Player.hooverRange then
+            local angle = utils.getSourceTargetAngle(bullet.x, bullet.y, self.tailX, self.tailY)
+            local cos,sin = math.cos(angle),math.sin(angle)
+            bullet.dx = cos
+            bullet.dy = sin
+            bullet:update(cos, sin, dist, dt)
+        end
+
+        -- Remove from global bullet table and put in player table
+        if dist <= Player.consumeRange then
+            table.insert(self.bullets, BulletTable[i])
+            table.remove(BulletTable, i)
         end
     end
 end

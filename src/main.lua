@@ -25,6 +25,7 @@ Pink = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
 offsetX = 0
+offsetY = 0
 
 -- Callbacks
 function love.load()
@@ -42,11 +43,11 @@ function love.update(dt)
 end
 
 function love.draw()
-	Player:draw()
-
     for _,bullet in ipairs(BulletTable) do
         bullet:draw()
     end
+
+	Player:draw()
 end
 
 function love.keypressed(key)
@@ -56,8 +57,14 @@ function love.keypressed(key)
 	end
 
     if DebugMode and key == "b" then
-        spawnBullet(100+offsetX, 100)
-        offsetX = offsetX + 10
+        for i=1,5 do
+            for j=1,50 do
+                spawnBullet(100+offsetX, 100+offsetY)
+                offsetX = offsetX + 10
+            end
+            offsetY = offsetY + 10
+            offsetX = 0
+        end
     end
 
     if DebugMode and key == "v" then
