@@ -37,6 +37,8 @@ function love.load()
 	-- Init state
 	GAME_STATES = { play = 0, done = 1, tutorial = 2 }
 	GameState = "tutorial"
+    ModIdCount = 1
+    ExistingModIds = {}
 
 	-- Start tutorial area
 	StartTutorial()
@@ -59,15 +61,16 @@ function StartTutorial()
 
 	-- Bullet Area
 	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
-	table.insert(DormantModTable, Mod(140, 90, 20, Cream, 0, "one"))
+    spawnMod(140, 90, 20, "one")
 
 	-- Mod Area
-	spawnMods(ScreenWidth - 150, 60, modSpawnRows, modSpawnColumns, "fast")
-	table.insert(DormantModTable, Mod(ScreenWidth - 105, 80, 20, Cream, 0, "two"))
+	-- spawnMods(ScreenWidth - 150, 60, modSpawnRows, modSpawnColumns, "fast")
+	spawnMods(ScreenWidth / 8, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
+    spawnMod(ScreenWidth - 105, 80, 20, "two")
 
 	-- Play Button Area
-	table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 2, 20, Cream, 0, "three"))
-	table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 1.8, 20, Cream, 0, "play"))
+    spawnMod(ScreenWidth / 2, ScreenHeight / 2, 20,  "three")
+    spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "play")
 end
 
 function StartGame()
@@ -132,15 +135,19 @@ function love.update(dt)
         end
 
         -- Mod collision
-        for k=#DormantModTable,1,-1 do
-            if enemy:checkCircleCollision(DormantModTable[k]) then
+        for k=#ExistingModIds,1,-1 do
+            if enemy:checkCircleCollision(AllModTable[ExistingModIds[k]]) then
+                local mod = AllModTable[ExistingModIds[k]]
+
+                -- Remove mod
                 table.remove(EnemyTable, i)
-                table.remove(DormantModTable, k)
+                DormantModTable[mod.modId] = nil
+                AllModTable[mod.modId] = nil
+                table.remove(ExistingModIds, k)
             end
         end
 
         -- TODO push enemies apart from one another
-        -- Enemy collision
 	end
 end
 
@@ -230,20 +237,13 @@ function spawnBullets(x, y, rows, columns)
 	end
 end
 
-function spawnMods(x, y, rows, columns, modType)
+function spawnMods(x, y, radius, rows, columns, modType)
 	local modSpawnX = x
 	local modSpawnY = y
 
 	for i = 1, rows do
 		for j = 1, columns do
-			local n = love.math.random(#Mod.MOD_TYPES)
-			if modType == nil then
-				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
-				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
-			else
-				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
-				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
-			end
+            spawnMod(modSpawnX, modSpawnY, radius, modType)
 			modSpawnX = modSpawnX + Mod.radius * 3
 		end
 		modSpawnX = x
@@ -251,9 +251,26 @@ function spawnMods(x, y, rows, columns, modType)
 	end
 end
 
+function spawnMod(x, y, radius, modType)
+    local mod = nil
+
+    if modType == nil then
+        local n = love.math.random(#Mod.MOD_TYPES)
+        mod = Mod(x, y, radius, Cream, 0, Mod.MOD_TYPES[n], ModIdCount)
+    else
+        mod = Mod(x, y, radius, Cream, 0, modType, ModIdCount)
+    end
+
+    DormantModTable[ModIdCount] = mod
+    AllModTable[ModIdCount] = mod
+    table.insert(ExistingModIds, ModIdCount)
+    ModIdCount = ModIdCount + 1
+end
+
 function spawnEnemies(x, y)
-    local n = love.math.random(#DormantModTable)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, {n=n, circ=Player.chain[n]}))
+    local n = love.math.random(#ExistingModIds)
+    local targetId = ExistingModIds[n]
+	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, AllModTable[targetId]))
 end
 
 -- make error handling nice

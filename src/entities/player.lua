@@ -386,8 +386,9 @@ function Player:removeFromChain(n)
 
             table.insert(DormantModTable, mod)
         else
+            -- Eaten by enemy
             -- n-1 because n (target) was determined via chain, so that included the head.
-            num = n-1
+            table.remove(AllModTable, n)
         end
 
         table.remove(self.mods, num)
