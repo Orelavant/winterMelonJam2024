@@ -39,7 +39,6 @@ function Player:new(x, y)
     self.headFollowerCount = Player.initHeadFollowerCount
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
-    self.modColor = Player.hColor
 
 	-- Head vars
 	self.hX = x
@@ -389,11 +388,6 @@ function Player:initChain()
                 currtChainColor[3] - Player.tChainColorReduction,
             }
             currChainColor = currtChainColor
-        end
-
-        -- Saving random color for mod spawns
-        if i == n then
-            self.modColor = currChainColor
         end
 
         -- Adding to body

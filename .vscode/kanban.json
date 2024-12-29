@@ -20,20 +20,8 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Make module color the next color it would be",
-                    "id": "aqb8xc3q87cv0lwie8rzb5ix"
-                },
-                {
-                    "text": "Bullet/Module Random Spawning",
+                    "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
                     "id": "zqxy6lyzy6t5702irvqrwpik"
-                },
-                {
-                    "text": "When hoovering, the closer you are to resources, the faster they get hoovered, the farther the slower it is",
-                    "id": "undtqcgag2syp5eyu5evzubj"
-                },
-                {
-                    "text": "Bullet Shooting",
-                    "id": "n90brn3kgb984isofedch4eb"
                 },
                 {
                     "text": "Module Effects",
@@ -44,7 +32,7 @@
                     "id": "t3gj08vgbmnpf7zyzz6m732d"
                 },
                 {
-                    "text": "Enemies",
+                    "text": "Enemies\n- spawn in waves from edges of screen",
                     "id": "gof0mqqnmjiw5vzh4vhke6j1"
                 },
                 {
@@ -56,7 +44,7 @@
                     "id": "dyj94cuktivjjn960igvhejx"
                 },
                 {
-                    "text": "Expand effect on circle when they do their function, hoover, or shoot",
+                    "text": "Expand effect on circle when they do their function, hoover, or shoot.\n- Shoot is delayed by how many body parts you have",
                     "id": "mdbim84y34awcw50elj7ntwx"
                 },
                 {
@@ -97,6 +85,10 @@
             "title": "Done",
             "tasks": [
                 {
+                    "text": "Make module color the next color it would be",
+                    "id": "aqb8xc3q87cv0lwie8rzb5ix"
+                },
+                {
                     "text": "Put all circles in chain",
                     "id": "tyboa50sy8u86u8031hdi2e7"
                 },
@@ -113,6 +105,14 @@
                     "id": "dcrhyjo4mgy5x8hu7o72yg85"
                 },
                 {
+                    "text": "When hoovering, the closer you are to resources, the faster they get hoovered, the farther the slower it is",
+                    "id": "undtqcgag2syp5eyu5evzubj"
+                },
+                {
+                    "text": "Bullet Shooting",
+                    "id": "n90brn3kgb984isofedch4eb"
+                },
+                {
                     "text": "Bullet Collecting\n- Collected bullets should show up in the tail",
                     "id": "u2x9gwhmvhhl1k9ik70klicr"
                 },
@@ -127,5 +127,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735430498353
+    "timestamp": 1735440588735
 }

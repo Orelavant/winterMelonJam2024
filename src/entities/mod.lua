@@ -5,19 +5,19 @@ local utils = require("lib.utils")
 
 -- Art assets
 local splitImg = love.graphics.newImage("art/split.png")
+local fastImg = love.graphics.newImage("art/fast.png")
 
 ---@class Mod:Circle
 local Mod = Circle:extend()
 
 -- Refactor this so you don't have to add to bullet and this table
 Mod.MOD_TYPES = {
-    split=0,
-    fast=1,
-    trap=2,
-    enlargen=3
+    "split",
+    "fast",
 }
 Mod.MOD_IMGS = {
-    split=splitImg
+    split=splitImg,
+    fast=fastImg
 }
 Mod.MOD_FUNCS = Bullet.MOD_FUNCS
 Mod.radius = 15

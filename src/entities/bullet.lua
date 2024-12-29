@@ -7,12 +7,13 @@ local utils = require("lib.utils")
 local Bullet = Circle:extend()
 
 -- Config
-Bullet.hooverSpeed = 250
+Bullet.hooverSpeed = 100
 Bullet.shootSpeed = 200
 Bullet.radius = 4
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 Bullet.initModTimer = 0.5
+Bullet.speedMod = 200
 
 ---Constructor
 function Bullet:new(x, y, dx, dy, radius, speed, color)
@@ -106,6 +107,7 @@ function Bullet:split()
 end
 
 function Bullet:fast()
+    self.speed = self.speed + Bullet.speedMod
 end
 
 function Bullet:trap()

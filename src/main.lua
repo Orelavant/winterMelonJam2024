@@ -13,6 +13,7 @@ local utils = require("lib.utils")
 --- @enum gameStates
 GAME_STATES = { play = 0, done = 1, menu = 2 }
 
+love.window.setMode(1000, 800)
 ScreenWidth = love.graphics.getWidth()
 ScreenHeight = love.graphics.getHeight()
 
@@ -98,7 +99,8 @@ function love.keypressed(key)
     end
 
     if DebugMode and key == "c" then
-        local newMod = Mod(200+offsetX, 200, Player.modColor, 0, "split")
+        local n = love.math.random(#Mod.MOD_TYPES)
+        local newMod = Mod(200+offsetX, 200, {1, 1, 1}, 0, Mod.MOD_TYPES[n])
         table.insert(DormantModTable, newMod)
         offsetX = offsetX + 50
     end
