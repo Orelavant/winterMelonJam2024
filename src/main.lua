@@ -11,7 +11,7 @@ local utils = require("lib.utils")
 
 -- Config
 --- @enum gameStates
-GAME_STATES = { play = 0, done = 1, menu = 2 }
+GAME_STATES = { play = 0, done = 1, tutorial = 2 }
 
 love.window.setMode(1000, 800)
 ScreenWidth = love.graphics.getWidth()
@@ -27,8 +27,7 @@ LightBlue = utils.normRgba(91, 118, 141)
 Pink = utils.normRgba(209, 124, 124)
 Orange = utils.normRgba(246, 198, 168)
 
-offsetX = 0
-offsetY = 0
+local BulletSpawnCount = 50
 
 -- Callbacks
 function love.load()
@@ -38,10 +37,16 @@ function love.load()
     Mod = require("entities.mod")
 
 	-- Init objs
+    GameState = "tutorial"
 	Player = Player(ScreenWidth / 2, ScreenHeight / 2)
     ActiveBulletTable = {}
     DormantBulletTable = {}
     DormantModTable = {}
+
+    -- Start tutorial area
+    if GAME_STATES[GameState] == GAME_STATES.tutorial then
+        spawnBullets(70, ScreenHeight - 150)
+    end
 end
 
 function love.update(dt)
@@ -87,14 +92,7 @@ function love.keypressed(key)
 	end
 
     if DebugMode and key == "b" then
-        for i=1,5 do
-            for j=1,50 do
-                table.insert(DormantBulletTable, Bullet(100+offsetX, 100+offsetY, 0, 0, Bullet.radius, Bullet.shootSpeed, DarkBlue))
-                offsetX = offsetX + 10
-            end
-            offsetY = offsetY + 10
-            offsetX = 0
-        end
+        spawnBullets(100, 100)
     end
 
     -- Fix later
@@ -125,6 +123,26 @@ end
 function resetGame()
 	GameState = GAME_STATES.done
 	love.load()
+end
+
+function spawnBullets(x, y)
+    local bulletSpawnX = x
+    local bulletSpawnY = y
+    local rowCount = BulletSpawnCount / 10
+    local colCount = BulletSpawnCount / rowCount
+
+    for i=1,rowCount do
+        for j=1,colCount do
+            table.insert(DormantBulletTable, Bullet(bulletSpawnX, bulletSpawnY, 0, 0, Bullet.radius, Bullet.shootSpeed, DarkBlue))
+            bulletSpawnX = bulletSpawnX + Bullet.radius * 4
+        end
+        bulletSpawnX = x
+        bulletSpawnY = bulletSpawnY + Bullet.radius * 4
+    end
+end
+
+function StartGame()
+    print("start game")
 end
 
 -- make error handling nice

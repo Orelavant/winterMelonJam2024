@@ -168,6 +168,12 @@ end
 function Player:hooverMods(mouseX, mouseY, dt)
     for i=#DormantModTable,1,-1 do
         local mod = DormantModTable[i]
+
+        -- Start game check
+        if mod.modType == Mod.MOD_TYPES.play then
+            StartGame()
+        end
+
         local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
         local tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
 
