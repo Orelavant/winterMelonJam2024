@@ -24,12 +24,12 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "Smoother tail updates (the back updates too quickly)",
-                    "id": "blhb8072xl94p8r24g3dbxcd"
+                    "text": "fix enemy tracking (there exists a branch for this)",
+                    "id": "e6th8fiallehl25an6txf8fu"
                 },
                 {
-                    "text": "EAT MOD",
-                    "id": "np9zrf64lxgt14zqgmwunxm7"
+                    "text": "Smoother tail updates (the back updates too quickly)",
+                    "id": "blhb8072xl94p8r24g3dbxcd"
                 },
                 {
                     "text": "Hoove animation",
@@ -121,6 +121,10 @@
                     "id": "e4wpwcap60um9g8wxiofgm7s"
                 },
                 {
+                    "text": "EAT MOD",
+                    "id": "np9zrf64lxgt14zqgmwunxm7"
+                },
+                {
                     "text": "Module Spitting",
                     "id": "t3gj08vgbmnpf7zyzz6m732d"
                 },
@@ -194,5 +198,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735505792154
+    "timestamp": 1735513363934
 }

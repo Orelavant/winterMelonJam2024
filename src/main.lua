@@ -59,15 +59,15 @@ function StartTutorial()
 
 	-- Bullet Area
 	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
-	table.insert(DormantModTable, Mod(140, 90, 20, Cream, 0, "one"))
+    spawnMod(140, 90, 20, "one")
 
 	-- Mod Area
-	spawnMods(ScreenWidth - 150, 60, modSpawnRows, modSpawnColumns, "fast")
-	table.insert(DormantModTable, Mod(ScreenWidth - 105, 80, 20, Cream, 0, "two"))
+	spawnMods(ScreenWidth / 8, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
+	spawnMod(ScreenWidth - 105, 80, 20, "two")
 
 	-- Play Button Area
-	table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 2, 20, Cream, 0, "three"))
-	table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 1.8, 20, Cream, 0, "play"))
+	spawnMod(ScreenWidth / 2, ScreenHeight / 2, 20,  "three")
+    spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "play")
 end
 
 function StartGame()
@@ -188,7 +188,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "c" then
-		spawnMods(Player.hX, Player.hY, 2, 2)
+        spawnMods(Player.hX, Player.hY, Player.radius, 2, 2)
 	end
 end
 
@@ -230,20 +230,13 @@ function spawnBullets(x, y, rows, columns)
 	end
 end
 
-function spawnMods(x, y, rows, columns, modType)
+function spawnMods(x, y, radius, rows, columns, modType)
 	local modSpawnX = x
 	local modSpawnY = y
 
 	for i = 1, rows do
 		for j = 1, columns do
-			local n = love.math.random(#Mod.MOD_TYPES)
-			if modType == nil then
-				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
-				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
-			else
-				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
-				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
-			end
+            spawnMod(modSpawnX, modSpawnY, radius, modType)
 			modSpawnX = modSpawnX + Mod.radius * 3
 		end
 		modSpawnX = x
@@ -251,9 +244,22 @@ function spawnMods(x, y, rows, columns, modType)
 	end
 end
 
+function spawnMod(x, y, radius, modType)
+    local mod = nil
+
+    if modType == nil then
+        local n = love.math.random(#Mod.MOD_TYPES)
+        mod = Mod(x, y, radius, Cream, 0, Mod.MOD_TYPES[n])
+    else
+        mod = Mod(x, y, radius, Cream, 0, modType)
+    end
+
+    table.insert(DormantModTable, mod)
+end
+
 function spawnEnemies(x, y)
     local n = love.math.random(#DormantModTable)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, {n=n, circ=Player.chain[n]}))
+	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, {n=1, circ=Player.chain[1]}))
 end
 
 -- make error handling nice
