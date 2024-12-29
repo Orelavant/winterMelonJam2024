@@ -109,6 +109,7 @@ function love.update(dt)
 		local enemy = EnemyTable[i]
 		enemy:update(dt)
 
+        -- TODO push enemies apart
         -- Enemy Collision
         for j = #EnemyTable, 1, -1 do
             if enemy:checkCircleCollision(EnemyTable[j]) then
