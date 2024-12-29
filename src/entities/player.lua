@@ -25,7 +25,7 @@ Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 Player.inittMoveRange = 100
 Player.initHooverRange = 75
-Player.tMoveRangeAddition = 5
+Player.tMoveRangeAddition = 10
 Player.hooverRangeAddition = 5
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
@@ -208,8 +208,8 @@ function Player:shoot(mouseX, mouseY)
         bullet.dy = sin
 
         -- Add mods to bullet
-        for _,mod in ipairs(self.mods) do
-            table.insert(bullet.mods, mod.modFunc)
+        for i=#self.mods,1,-1 do
+            table.insert(bullet.mods, self.mods[i].modFunc)
         end
 
         -- Add to active bullets, remove from self
@@ -416,7 +416,7 @@ function Player:initChain()
 
         -- Adding to body
         if i < chainCount then
-            table.insert(self.chain, Mod(self.tailX, self.tailY, currChainColor, currChainSpeed, self.mods[chainCount - i].modType))
+            table.insert(self.chain, Mod(self.tailX, self.tailY, currChainColor, currChainSpeed, self.mods[i].modType))
         else
             -- Adding tail, which is just a circle
             local circle = Circle(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)

@@ -18,7 +18,6 @@ local Mod = Circle:extend()
 
 -- Refactor this so you don't have to add to bullet and this table
 Mod.MOD_TYPES = {
-    "play",
     "split",
     "fast",
     "reverse",
