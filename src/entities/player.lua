@@ -142,10 +142,7 @@ function Player:hooverBullets(mouseX, mouseY, dt)
 
         -- Bring closer
         if tailToMouseDist <= self.hooverRange and tailToBulletDist <= self.hooverRange then
-            local angle = utils.getSourceTargetAngle(bullet.x, bullet.y, self.tailX, self.tailY)
-            local cos,sin = math.cos(angle),math.sin(angle)
-            bullet.dx = cos
-            bullet.dy = sin
+            local cos,sin = utils.getSourceTargetAngleComponents(bullet.x, bullet.y, self.tailX, self.tailY)
             bullet:hoover(cos, sin, tailToBulletDist, dt)
         end
 
@@ -177,10 +174,7 @@ function Player:hooverMods(mouseX, mouseY, dt)
 
                 -- Bring closer
                 if tailToMouseDist <= self.hooverRange and tailToModDist <= self.hooverRange then
-                    local angle = utils.getSourceTargetAngle(mod.x, mod.y, self.tailX, self.tailY)
-                    local cos,sin = math.cos(angle),math.sin(angle)
-                    mod.dx = cos
-                    mod.dy = sin
+                    local cos,sin = utils.getSourceTargetAngleComponents(mod.x, mod.y, self.tailX, self.tailY)
                     mod:hoover(cos, sin, tailToModDist, dt)
                 end
 
@@ -462,7 +456,7 @@ function Player:handleBulletStorageAnimation()
         end
 
         -- Get new radius and change color gradient
-        self.currBulletStorageSpotRadius = Player.initBulletStorageRadius - Bullet.bulletRadiusStorageSize
+        self.currBulletStorageSpotRadius = Player.initBulletStorageRadius
         local cos,sin = math.cos(self.currBulletStorageSpotAngle), math.sin(self.currBulletStorageSpotAngle)
         self.currBulletXOffset = Player.radius * cos
         self.currBulletYOffset = Player.radius * sin

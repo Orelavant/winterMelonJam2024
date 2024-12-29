@@ -5,6 +5,10 @@
             "title": "Bugs",
             "tasks": [
                 {
+                    "text": "Enemies\n- adjust their turn angle over time\n- Make it so they don't stack on each other",
+                    "id": "u712qnqhpob1zn9xfoad4v1k"
+                },
+                {
                     "text": "Fix how there is one bullet stored in a weird spot (has to do with the starting position of the storage I think)",
                     "id": "z2ainewatmpyohepckox8d3y"
                 },
@@ -22,14 +26,6 @@
                 {
                     "text": "Hoove animation",
                     "id": "c40yd3b9kytdwkdme166i0hl"
-                },
-                {
-                    "text": "Tutorial area, where you have to hoover up some resources, can play with mods, and then hoover the play button",
-                    "id": "e4wpwcap60um9g8wxiofgm7s"
-                },
-                {
-                    "text": "Petri dish background, for tutorial area.\n\nThen you fall and are on the tiled flooring of a lab",
-                    "id": "uw14g5mcib2lrl38o24qvxz1"
                 },
                 {
                     "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
@@ -101,6 +97,14 @@
             "title": "Done",
             "tasks": [
                 {
+                    "text": "Petri dish background, for tutorial area.\n\nThen you fall and are on the tiled flooring of a lab",
+                    "id": "uw14g5mcib2lrl38o24qvxz1"
+                },
+                {
+                    "text": "Tutorial area, where you have to hoover up some resources, can play with mods, and then hoover the play button",
+                    "id": "e4wpwcap60um9g8wxiofgm7s"
+                },
+                {
                     "text": "Module Spitting",
                     "id": "t3gj08vgbmnpf7zyzz6m732d"
                 },
@@ -143,9 +147,32 @@
             ],
             "id": "c36o1n0kwxkzr4zfmqql6396",
             "color": "#00d084"
+        },
+        {
+            "title": "Audio",
+            "tasks": [
+                {
+                    "text": "Enemy spawn and death noises",
+                    "id": "ozw6ixy5m2lwf3prikh3jrfa"
+                },
+                {
+                    "text": "Shoot and module throw up",
+                    "id": "c7isxwxg1ku7fndutr31gjve"
+                },
+                {
+                    "text": "Hoover suck and consume",
+                    "id": "ymcu6ttim5ckrwa4d7yahtkl"
+                },
+                {
+                    "text": "Mod sound effects for when they are applied",
+                    "id": "b7fgm83rghm0p9y4fuitpl9x"
+                }
+            ],
+            "id": "gantslawgexemp3m831yg9vg",
+            "color": "#f78da7"
         }
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735454507653
+    "timestamp": 1735498467125
 }

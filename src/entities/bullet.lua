@@ -12,8 +12,8 @@ Bullet.shootSpeed = 250
 Bullet.radius = 5
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
-Bullet.initModTimer = 0.5
-Bullet.speedMod = 100
+Bullet.initModTimer = 0.3
+Bullet.speedMod = 150
 Bullet.enlargenMod = 2
 
 ---Constructor
