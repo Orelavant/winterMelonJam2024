@@ -254,20 +254,28 @@ end
 
 function Player:updateHead(circle, dt)
     if not self.tailMoving then
-        -- Target mousePosition
-        local mouseX, mouseY = love.mouse.getPosition()
-        local dx, dy = utils.getSourceTargetAngleComponents(circle.x, circle.y, mouseX, mouseY)
-        local mouseDist = utils.getDistance(circle.x, circle.y, mouseX, mouseY)
+        local dx, dy
+
+       -- Input to Movement
+        if love.keyboard.isDown("w") then
+            dy = -1
+        elseif love.keyboard.isDown("s") then
+            dy = 1
+        else
+            dy = 0
+        end
+
+        if love.keyboard.isDown("d") then
+            dx = 1
+        elseif love.keyboard.isDown("a") then
+            dx = -1
+        else
+            dx = 0
+        end
 
         -- Update last nonzero dx dy
         if dx ~= 0 or dy ~= 0 then
             self.hNonZeroDx, self.hNonZeroDy = dx, dy
-        end
-
-        -- Acceleration based off distance to target
-        local accel = math.min(mouseDist / Player.bodyAccelDiv, Player.tailAccel)
-        if accel < 0.1 then
-            accel = 0
         end
 
         -- Update dx, dy
