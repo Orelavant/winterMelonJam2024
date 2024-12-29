@@ -44,7 +44,7 @@ end
 
 function StartTutorial()
     -- Spawn Player and init
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight - (ScreenHeight / 4))
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 4)
     ActiveBulletTable = {}
     DormantBulletTable = {}
     DormantModTable = {}
@@ -56,26 +56,26 @@ function StartTutorial()
     local modSpawnColumns = 3
 
     -- Bullet Area
-    spawnBullets(50, ScreenHeight - 150, bulletSpawnRows, bulletSpawnColumns)
-    table.insert(DormantModTable, Mod(140, ScreenHeight - 190, 20, Cream, 0, "one"))
+    spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
+    table.insert(DormantModTable, Mod(140, 90, 20, Cream, 0, "one"))
 
     -- Mod Area
-    spawnMods(ScreenWidth - 140, ScreenHeight - 130, modSpawnRows, modSpawnColumns, "fast")
-    table.insert(DormantModTable, Mod(ScreenWidth - 95, ScreenHeight - 190, 20, Cream, 0, "two"))
+    spawnMods(ScreenWidth - 150, 60, modSpawnRows, modSpawnColumns, "fast")
+    table.insert(DormantModTable, Mod(ScreenWidth - 105, 80, 20, Cream, 0, "two"))
 
     -- Play Button Area
-    table.insert(DormantModTable, Mod(ScreenWidth / 2, 50, 20, Cream, 0, "three"))
-    table.insert(DormantModTable, Mod(ScreenWidth / 2, 100, 20, Cream, 0, "play"))
+    table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 2, 20, Cream, 0, "three"))
+    table.insert(DormantModTable, Mod(ScreenWidth / 2, ScreenHeight / 1.8, 20, Cream, 0, "play"))
 end
 
 function StartGame()
     GameState = "play"
 
-    -- -- Reset
-    -- Player2 = PlayerInit(ScreenWidth / 2, ScreenHeight - (ScreenHeight / 4))
-    -- ActiveBulletTable = {}
-    -- DormantBulletTable = {}
-    -- DormantModTable = {}
+    -- Reset
+    Player = PlayerInit(ScreenWidth / 2, ScreenHeight - (ScreenHeight / 4))
+    ActiveBulletTable = {}
+    DormantBulletTable = {}
+    DormantModTable = {}
 end
 
 function love.update(dt)

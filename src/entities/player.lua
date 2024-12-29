@@ -25,8 +25,8 @@ Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 Player.inittMoveRange = 80
 Player.initHooverRange = 60
-Player.tMoveRangeAddition = 10
-Player.hooverRangeAddition = 10
+Player.tMoveRangeAddition = 0
+Player.hooverRangeAddition = 0
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -167,33 +167,37 @@ end
 
 -- Could refactor to reduce duplication with above method
 function Player:hooverMods(mouseX, mouseY, dt)
-    for i=#DormantModTable,1,-1 do
-        local mod = DormantModTable[i]
+    if #DormantModTable > 0 then
+        for i=#DormantModTable,1,-1 do
+            local mod = DormantModTable[i]
 
-        local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
-        local tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
+            if mod ~= nil then
+                local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
+                local tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
 
-        -- Bring closer
-        if tailToMouseDist <= self.hooverRange and tailToModDist <= self.hooverRange then
-            local angle = utils.getSourceTargetAngle(mod.x, mod.y, self.tailX, self.tailY)
-            local cos,sin = math.cos(angle),math.sin(angle)
-            mod.dx = cos
-            mod.dy = sin
-            mod:hoover(cos, sin, tailToModDist, dt)
-        end
+                -- Bring closer
+                if tailToMouseDist <= self.hooverRange and tailToModDist <= self.hooverRange then
+                    local angle = utils.getSourceTargetAngle(mod.x, mod.y, self.tailX, self.tailY)
+                    local cos,sin = math.cos(angle),math.sin(angle)
+                    mod.dx = cos
+                    mod.dy = sin
+                    mod:hoover(cos, sin, tailToModDist, dt)
+                end
 
-        -- Remove from global mod table and put in player table
-        tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
-        if tailToMouseDist <= self.hooverRange and tailToModDist <= Player.consumeRange then
-            -- Start game check
-            if mod.modType == "play" then
-                StartGame()
+                -- Remove from global mod table and put in player table
+                tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
+                if tailToMouseDist <= self.hooverRange and tailToModDist <= Player.consumeRange then
+                    -- Start game check
+                    if mod.modType == "play" then
+                        StartGame()
+                    end
+
+                    -- Otherwise add mod to self
+                    table.insert(self.mods, mod)
+                    table.remove(DormantModTable, i)
+                    self:addToChain()
+                end
             end
-
-            -- Otherwise add mod to self
-            table.insert(self.mods, mod)
-            table.remove(DormantModTable, i)
-            self:addToChain()
         end
     end
 end
