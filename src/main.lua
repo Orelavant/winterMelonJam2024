@@ -109,13 +109,23 @@ function love.update(dt)
 		local enemy = EnemyTable[i]
 		enemy:update(dt)
 
-        -- TODO push enemies apart
-        -- Enemy Collision
-        for j = #EnemyTable, 1, -1 do
-            if enemy:checkCircleCollision(EnemyTable[j]) then
-                -- table.remove(EnemyTable, i)
+        -- Player collision
+        for j,circle in ipairs(Player.chain) do
+            if enemy:checkCircleCollision(circle) then
+                if j == 1 then
+                    EndGame()
+                elseif j == #Player.chain then
+                    Player.bullets = {}
+                else
+                    Player:removeFromChain()
+                end
+
+                table.remove(EnemyTable, i)
             end
         end
+
+        -- TODO push enemies apart from one another
+        -- Enemy collision
 	end
 end
 
@@ -150,7 +160,7 @@ end
 
 function love.keypressed(key)
 	-- Reset game
-	if key == "r" then
+	if DebugMode and key == "r" then
 		resetGame()
 	end
 
@@ -180,9 +190,13 @@ function love.mousepressed(x, y, button)
 end
 
 function resetGame()
-	GameState = GAME_STATES.done
 	love.load()
 end
+
+function EndGame()
+    print("you lose")
+end
+
 
 function spawnBullets(x, y, rows, columns)
 	local bulletSpawnX = x
@@ -221,7 +235,8 @@ function spawnMods(x, y, rows, columns, modType)
 end
 
 function spawnEnemies(x, y)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0))
+    local n = love.math.random(#Player.chain)
+	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, Player.chain[n]))
 end
 
 -- make error handling nice

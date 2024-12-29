@@ -56,6 +56,10 @@
                     "id": "tuvntpon4mfkm1pcyf58yvo3"
                 },
                 {
+                    "text": "Spitting module sends it flying a bit",
+                    "id": "hzf2z3fjc1r5thl5vf3c8pyt"
+                },
+                {
                     "text": "Expand effect on circle when they do their function, hoover, or shoot.\n- Shoot is delayed by how many body parts you have",
                     "id": "mdbim84y34awcw50elj7ntwx"
                 },
@@ -152,6 +156,10 @@
             "title": "Audio",
             "tasks": [
                 {
+                    "text": "Enemy gobble up module sound",
+                    "id": "wej4i6upnonmdf5j8piigpq4"
+                },
+                {
                     "text": "Enemy spawn and death noises",
                     "id": "ozw6ixy5m2lwf3prikh3jrfa"
                 },
@@ -174,5 +182,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735498467125
+    "timestamp": 1735501248913
 }
