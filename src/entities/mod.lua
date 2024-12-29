@@ -11,11 +11,10 @@ Mod.MOD_TYPES = Bullet.MOD_TYPES
 Mod.radius = Player.radius
 Mod.speed = 0
 Mod.hooverSpeed = 50
-Mod.color = Pink
 
 ---Constructor
-function Mod:new(x, y, modFunc)
-    Mod.super.new(self, x, y, 0, 0, Mod.radius, Mod.speed, Mod.color)
+function Mod:new(x, y, color, modFunc)
+    Mod.super.new(self, x, y, 0, 0, Mod.radius, Mod.speed, color)
 	self.modFunc = modFunc
 end
 

@@ -24,8 +24,8 @@ Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 Player.inittMoveRange = 120
 Player.initHooverRange = 75
-Player.tMoveRangeAddition = 10
-Player.hooverRangeAddition = 5
+Player.tMoveRangeAddition = 15
+Player.hooverRangeAddition = 12
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -38,6 +38,7 @@ function Player:new(x, y)
     self.headFollowerCount = Player.initHeadFollowerCount
     self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
+    self.modColor = Player.hColor
 
 	-- Head vars
 	self.hX = x
@@ -355,8 +356,11 @@ function Player:initChain()
 	local currhChainColor = Player.hColor
 	local currtChainColor = Player.tColor
 
-	-- Consider head and tail
+	-- Consider head
 	local chainCount = self.chainCount - 1
+
+    -- Rand n for fun mod color
+    local n = love.math.random(chainCount)
 
     -- Add head
 	self.head = CircleInit(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)
@@ -383,6 +387,11 @@ function Player:initChain()
                 currtChainColor[3] - Player.tChainColorReduction,
             }
             currChainColor = currtChainColor
+        end
+
+        -- Saving last color for mod spawns
+        if i == n then
+            self.modColor = currChainColor
         end
 
 		local circle = CircleInit(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)
