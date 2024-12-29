@@ -23,7 +23,7 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.inittMoveRange = 120
+Player.inittMoveRange = 80
 Player.initHooverRange = 60
 Player.tMoveRangeAddition = 10
 Player.hooverRangeAddition = 10
@@ -253,40 +253,38 @@ function Player:updateBody(dt)
 end
 
 function Player:updateHead(circle, dt)
-    if not self.tailMoving then
-        local dx, dy
+    local dx, dy
 
-       -- Input to Movement
-        if love.keyboard.isDown("w") then
-            dy = -1
-        elseif love.keyboard.isDown("s") then
-            dy = 1
-        else
-            dy = 0
-        end
-
-        if love.keyboard.isDown("d") then
-            dx = 1
-        elseif love.keyboard.isDown("a") then
-            dx = -1
-        else
-            dx = 0
-        end
-
-        -- Update last nonzero dx dy
-        if dx ~= 0 or dy ~= 0 then
-            self.hNonZeroDx, self.hNonZeroDy = dx, dy
-        end
-
-        -- Update dx, dy
-        circle.dx, circle.dy = dx, dy
-
-        -- Update circle
-        circle:update(dt)
-
-        -- Update location of head
-        self.hX, self.hY = circle.x, circle.y
+    -- Input to Movement
+    if love.keyboard.isDown("w") then
+        dy = -1
+    elseif love.keyboard.isDown("s") then
+        dy = 1
+    else
+        dy = 0
     end
+
+    if love.keyboard.isDown("d") then
+        dx = 1
+    elseif love.keyboard.isDown("a") then
+        dx = -1
+    else
+        dx = 0
+    end
+
+    -- Update last nonzero dx dy
+    if dx ~= 0 or dy ~= 0 then
+        self.hNonZeroDx, self.hNonZeroDy = dx, dy
+    end
+
+    -- Update dx, dy
+    circle.dx, circle.dy = dx, dy
+
+    -- Update circle
+    circle:update(dt)
+
+    -- Update location of head
+    self.hX, self.hY = circle.x, circle.y
 end
 
 function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
