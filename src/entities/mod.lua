@@ -1,6 +1,5 @@
 -- Imports
 local Circle = require("entities.circle")
-local Player = require("entities.player")
 local Bullet = require("entities.bullet")
 local utils = require("lib.utils")
 
@@ -21,14 +20,14 @@ Mod.MOD_IMGS = {
     split=splitImg
 }
 Mod.MOD_FUNCS = Bullet.MOD_FUNCS
-Mod.radius = Player.radius
-Mod.speed = 0
+Mod.radius = 15
 Mod.hooverSpeed = 50
 
 ---Constructor
 --- Refactor this so you don't have to add modType and modFunc
-function Mod:new(x, y, color, modType)
-    Mod.super.new(self, x, y, 0, 0, Mod.radius, Mod.speed, color)
+function Mod:new(x, y, color, speed, modType)
+    Mod.super.new(self, x, y, 0, 0, Mod.radius, speed, color)
+    self.modType = modType
 	self.modFunc = Mod.MOD_FUNCS[modType]
     self.modImage = Mod.MOD_IMGS[modType]
 end

@@ -1,6 +1,7 @@
 -- Imports
 local Object = require("lib.classic")
-local CircleInit = require("entities.circle")
+local Circle = require("entities.circle")
+local Mod = require("entities.mod")
 local Bullet = require("entities.bullet")
 local utils = require("lib.utils")
 
@@ -357,14 +358,14 @@ function Player:initChain()
 	local currhChainColor = Player.hColor
 	local currtChainColor = Player.tColor
 
-	-- Consider head and tail
+	-- Consider head
 	local chainCount = self.chainCount - 1
 
     -- Rand n for fun mod color
     local n = love.math.random(chainCount)
 
     -- Add head
-	self.head = CircleInit(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)
+	self.head = Circle(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)
     table.insert(self.chain, self.head)
 
 	-- Populate chain
@@ -395,8 +396,14 @@ function Player:initChain()
             self.modColor = currChainColor
         end
 
-		local circle = CircleInit(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)
-		table.insert(self.chain, circle)
+        -- Adding to body
+        if i < chainCount then
+            table.insert(self.chain, Mod(self.tailX, self.tailY, currChainColor, currChainSpeed, self.mods[chainCount - i].modType))
+        else
+            -- Adding tail, which is just a circle
+            local circle = Circle(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)
+            table.insert(self.chain, circle)
+        end
 	end
 end
 

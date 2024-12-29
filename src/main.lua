@@ -98,7 +98,7 @@ function love.keypressed(key)
     end
 
     if DebugMode and key == "c" then
-        local newMod = Mod(200+offsetX, 200, Player.modColor, "split")
+        local newMod = Mod(200+offsetX, 200, Player.modColor, 0, "split")
         table.insert(DormantModTable, newMod)
         offsetX = offsetX + 50
     end
