@@ -201,8 +201,8 @@ function Player:shoot(mouseX, mouseY)
         bullet.dx = cos
         bullet.dy = sin
 
-        -- Add mods to bullet in reverse order
-        for i=#self.mods,1,-1 do
+        -- Add mods to bullet
+        for i=1,#self.mods do
             table.insert(bullet.mods, self.mods[i].modFunc)
         end
 

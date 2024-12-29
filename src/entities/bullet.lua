@@ -9,11 +9,11 @@ local Bullet = Circle:extend()
 -- Config
 Bullet.hooverSpeed = 100
 Bullet.shootSpeed = 200
-Bullet.radius = 4
+Bullet.radius = 5
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 Bullet.initModTimer = 0.5
-Bullet.speedMod = 200
+Bullet.speedMod = 50
 
 ---Constructor
 function Bullet:new(x, y, dx, dy, radius, speed, color)
