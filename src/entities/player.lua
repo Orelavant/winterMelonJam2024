@@ -22,7 +22,7 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.inittMoveRange = 150
+Player.inittMoveRange = 120
 Player.initHooverRange = 75
 Player.tMoveRangeAddition = 10
 Player.hooverRangeAddition = 5
@@ -189,8 +189,8 @@ function Player:hooverMods(mouseX, mouseY, dt)
 end
 
 function Player:shoot(mouseX, mouseY)
-    -- Update bullet
     if #self.bullets > 0 then
+        -- Update bullet with default shoot values
         local bullet = self.bullets[#self.bullets]
         local cos,sin = utils.getSourceTargetAngleComponents(self.hX, self.hY, mouseX, mouseY)
         bullet.x = self.hX
@@ -198,6 +198,11 @@ function Player:shoot(mouseX, mouseY)
         bullet.radius = Bullet.radius
         bullet.dx = cos
         bullet.dy = sin
+
+        -- Add mods to bullet in reverse order
+        for i=#self.mods,1,-1 do
+            table.insert(bullet.mods, self.mods[i].modFunc)
+        end
 
         -- Add to active bullets, remove from self
         table.insert(ActiveBulletTable, bullet)

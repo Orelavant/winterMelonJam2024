@@ -8,16 +8,31 @@ local Bullet = Circle:extend()
 
 -- Config
 Bullet.hooverSpeed = 250
-Bullet.shootSpeed = 600
+Bullet.shootSpeed = 400
 Bullet.radius = 4
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
+Bullet.initModTimer = 0.5
 
 ---Constructor
-function Bullet:new(x, y, color)
-    Bullet.super.new(self, x, y, 0, 0, Bullet.radius, Bullet.shootSpeed, color, Bullet.screenColType)
+function Bullet:new(x, y, dx, dy, color)
+    Bullet.super.new(self, x, y, dx, dy, Bullet.radius, Bullet.shootSpeed, color, Bullet.screenColType)
     self.bulletStorageXOffset = 0
     self.bulletStorageYOffset = 0
+
+    -- Mod vars
+    -- TODO ADD ANY ADDITIONS BELOW TO SPLIT
+    self.modTimer = Bullet.initModTimer
+    self.mods = {}
+    self.currMod = 1
+end
+
+function Bullet:update(dt)
+    -- Apply mods
+    self:applyMod(dt)
+
+    -- Proceed
+    Bullet.super.update(self, dt)
 end
 
 function Bullet:hoover(cos, sin, dist, dt)
@@ -40,5 +55,64 @@ function Bullet:storageUpdate(x, y)
     self.x = self.bulletStorageXOffset + x
     self.y = self.bulletStorageYOffset + y
 end
+
+function Bullet:applyMod(dt)
+    -- Check if any mods left
+    if self.currMod <= #self.mods then
+        -- Apply mods or decrement timer
+        if self.modTimer > 0 then
+            self.modTimer = self.modTimer - dt
+        else
+            -- Apply mod
+            self.mods[self.currMod](self)
+
+            -- Reset mod timer and increment currMod
+            self.modTimer = Bullet.initModTimer
+            self.currMod = self.currMod + 1
+
+        end
+    end
+end
+
+function Bullet:split()
+    -- Get angle of current directions
+    local angle = math.atan2(self.dy, self.dx)
+
+    -- Slighty offset the angle
+    local angle1 = angle + math.rad(10)
+    local angle2 = angle - math.rad(10)
+
+    -- Derive new directions
+    local cos1,sin1 = math.cos(angle1), math.sin(angle1)
+    local cos2,sin2 = math.cos(angle2), math.sin(angle2)
+
+    -- New active bullet
+    local newBullet = Bullet(self.x, self.y, cos1, sin1, self.color)
+    newBullet.modTimer = Bullet.initModTimer
+    newBullet.mods = self.mods
+    newBullet.currMod = self.currMod + 1
+
+    table.insert(ActiveBulletTable, newBullet)
+
+    -- Split dir of this bullet
+    self.dx = cos2
+    self.dy = sin2
+end
+
+function Bullet:fast()
+end
+
+function Bullet:trap()
+end
+
+function Bullet:enlargen()
+end
+
+Bullet.MOD_TYPES = {
+    split=Bullet.split,
+    fast=Bullet.fast,
+    trap=Bullet.trap,
+    enlargen=Bullet.enlargen
+}
 
 return Bullet

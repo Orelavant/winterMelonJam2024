@@ -1,19 +1,22 @@
 -- Imports
 local Circle = require("entities.circle")
 local Player = require("entities.player")
+local Bullet = require("entities.bullet")
 local utils = require("lib.utils")
 
 ---@class Mod:Circle
 local Mod = Circle:extend()
 
+Mod.MOD_TYPES = Bullet.MOD_TYPES
 Mod.radius = Player.radius
 Mod.speed = 0
 Mod.hooverSpeed = 50
 Mod.color = Pink
 
 ---Constructor
-function Mod:new(x, y)
+function Mod:new(x, y, modFunc)
     Mod.super.new(self, x, y, 0, 0, Mod.radius, Mod.speed, Mod.color)
+	self.modFunc = modFunc
 end
 
 function Mod:hoover(cos, sin, dist, dt)

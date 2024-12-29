@@ -29,12 +29,12 @@ offsetY = 0
 -- Callbacks
 function love.load()
 	-- Init classes
-	PlayerInit = require("entities.player")
-    BulletInit = require("entities.bullet")
-    ModInit = require("entities.mod")
+	Player = require("entities.player")
+    Bullet = require("entities.bullet")
+    Mod = require("entities.mod")
 
 	-- Init objs
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
+	Player = Player(ScreenWidth / 2, ScreenHeight / 2)
     ActiveBulletTable = {}
     DormantBulletTable = {}
     DormantModTable = {}
@@ -85,7 +85,7 @@ function love.keypressed(key)
     if DebugMode and key == "b" then
         for i=1,5 do
             for j=1,50 do
-                spawnBullet(100+offsetX, 100+offsetY, DarkBlue)
+                table.insert(DormantBulletTable, Bullet(100+offsetX, 100+offsetY, 0, 0, DarkBlue))
                 offsetX = offsetX + 10
             end
             offsetY = offsetY + 10
@@ -98,7 +98,8 @@ function love.keypressed(key)
     end
 
     if DebugMode and key == "c" then
-        spawnMod(200+offsetX, 200)
+        local newMod = Mod(200+offsetX, 200, Bullet.MOD_TYPES.split)
+        table.insert(DormantModTable, newMod)
         offsetX = offsetX + 50
     end
 end
@@ -108,14 +109,6 @@ function love.mousepressed(x, y, button)
     if button == 1 then
         Player:shoot(x, y)
     end
-end
-
-function spawnBullet(x, y, color)
-    table.insert(DormantBulletTable, BulletInit(x, y, color))
-end
-
-function spawnMod(x, y)
-    table.insert(DormantModTable, ModInit(x, y))
 end
 
 function resetGame()
