@@ -42,11 +42,12 @@ Mod.vomitSpeedDecayTime = 0.2
 
 ---Constructor
 --- Refactor this so you don't have to add modType and modFunc
-function Mod:new(x, y, radius, color, speed, modType)
+function Mod:new(x, y, radius, color, speed, modType, modId)
     Mod.super.new(self, x, y, 0, 0, radius, speed, color)
     self.modType = modType
 	self.modFunc = Mod.MOD_FUNCS[modType]
     self.modImage = Mod.MOD_IMGS[modType]
+    self.modId = modId
 
     self.vomitSpeedDecayPerSecond = 0
 end
