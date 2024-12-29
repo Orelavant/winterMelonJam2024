@@ -23,7 +23,7 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.inittMoveRange = 120
+Player.inittMoveRange = 100
 Player.initHooverRange = 75
 Player.tMoveRangeAddition = 5
 Player.hooverRangeAddition = 5
@@ -51,9 +51,9 @@ function Player:new(x, y)
 	self.tailY = y
 	self.tNonZeroDx = 0
 	self.tNonZeroDy = -1
-    self.tailMoving = false
     self.tMoveRange = Player.inittMoveRange
     self.hooverRange = Player.initHooverRange
+    self.tailMoving = false
 
 	-- Create chain
 	self.chain = {}
@@ -61,7 +61,7 @@ function Player:new(x, y)
 
     -- Bullet store
     self.bullets = {}
-    self.bulletStorageColor = LightBlue
+    self.bulletStorageColor = DarkBlue
     self.currBulletStorageDegrees = 270
     self.currBulletStorageSpotAngle = math.rad(self.currBulletStorageDegrees)
     self.currBulletStorageSpotRadius = Player.initBulletStorageRadius
@@ -89,7 +89,7 @@ function Player:drawChain()
 		circle:draw()
 
         -- Draw areas of influence
-        if i == #self.chain then
+        if DebugMode and i == #self.chain then
             love.graphics.setColor({1, 1, 1, 0.3})
             love.graphics.circle(
                 "line",
@@ -97,7 +97,7 @@ function Player:drawChain()
                 circle.y,
                 self.hooverRange
             )
-            if not DebugMode then
+            if DebugMode then
                 love.graphics.circle(
                     "line",
                     circle.x,
@@ -208,8 +208,8 @@ function Player:shoot(mouseX, mouseY)
         bullet.dy = sin
 
         -- Add mods to bullet
-        for i=1,#self.mods do
-            table.insert(bullet.mods, self.mods[i].modFunc)
+        for _,mod in ipairs(self.mods) do
+            table.insert(bullet.mods, mod.modFunc)
         end
 
         -- Add to active bullets, remove from self
@@ -289,7 +289,7 @@ function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
 
         -- Update last nonzero dx dy
         if cos ~= 0 or sin ~= 0 then
-            self.tNonZeroDx, self.tNonZeroDy = -cos, -sin
+            self.tNonZeroDx, self.tNonZeroDy = cos, sin
         end
 
         -- Acceleration based off distance to target
@@ -386,9 +386,6 @@ function Player:initChain()
 
 	-- Consider head
 	local chainCount = self.chainCount - 1
-
-    -- Rand n for fun mod color
-    local n = love.math.random(chainCount)
 
     -- Add head
 	self.head = Circle(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)

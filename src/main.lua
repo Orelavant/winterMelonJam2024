@@ -7,36 +7,42 @@ else
 end
 
 -- Imports
-local utils = require("lib.utils")
+local utils = nil
+local background = nil
 
 -- Config
 --- @enum gameStates
 GAME_STATES = { play = 0, done = 1, tutorial = 2 }
-
-love.window.setMode(1000, 800)
-ScreenWidth = love.graphics.getWidth()
-ScreenHeight = love.graphics.getHeight()
-ScreenWidthBuffer = 200
-ScreenHeightBuffer = 200
-
--- Colors
--- https://lospec.com/palette-list/coldfire-gb
-Cream = utils.normRgba(255, 246, 211)
-DarkBlue = utils.normRgba(70, 66, 94)
-LightBlue = utils.normRgba(91, 118, 141)
-Pink = utils.normRgba(209, 124, 124)
-Orange = utils.normRgba(246, 198, 168)
-
-local BulletSpawnCount = 50
+local BulletSpawnCount = nil
+local ModSpawnCount = nil
 
 -- Callbacks
 function love.load()
+    -- Init background image and screen
+    love.window.setMode(1200, 800)
+    ScreenWidth = love.graphics.getWidth()
+    ScreenHeight = love.graphics.getHeight()
+    ScreenWidthBuffer = 200
+    ScreenHeightBuffer = 200
+    background = love.graphics.newImage("art/background.png")
+
+    -- Colors
+    -- https://lospec.com/palette-list/coldfire-gb
+    utils = require("lib.utils")
+    Cream = utils.normRgba(255, 246, 211)
+    DarkBlue = utils.normRgba(70, 66, 94)
+    LightBlue = utils.normRgba(91, 118, 141)
+    Pink = utils.normRgba(209, 124, 124)
+    Orange = utils.normRgba(246, 198, 168)
+
 	-- Init classes
 	Player = require("entities.player")
     Bullet = require("entities.bullet")
     Mod = require("entities.mod")
 
 	-- Init objs
+    BulletSpawnCount = 50
+    ModSpawnCount = 10
     GameState = "tutorial"
 	Player = Player(ScreenWidth / 2, ScreenHeight / 2)
     ActiveBulletTable = {}
@@ -65,6 +71,11 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Background image
+    love.graphics.setBackgroundColor(1, 1, 1)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(background)
+
     -- Dormant Bullets
     for _,bullet in ipairs(DormantBulletTable) do
         bullet:draw()
@@ -101,10 +112,7 @@ function love.keypressed(key)
     -- end
 
     if DebugMode and key == "c" then
-        local n = love.math.random(#Mod.MOD_TYPES)
-        local newMod = Mod(200+offsetX, 200, Cream, 0, Mod.MOD_TYPES[n])
-        table.insert(DormantModTable, newMod)
-        offsetX = offsetX + 50
+        spawnMods(300, 300)
     end
 end
 
@@ -138,6 +146,23 @@ function spawnBullets(x, y)
         end
         bulletSpawnX = x
         bulletSpawnY = bulletSpawnY + Bullet.radius * 4
+    end
+end
+
+function spawnMods(x, y)
+    local modSpawnX = x
+    local modSpawnY = y
+    local rowCount = 3
+    local colCount = 1
+
+    for i=1,rowCount do
+        for j=1,colCount do
+            local n = love.math.random(#Mod.MOD_TYPES)
+            table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Cream, 0, Mod.MOD_TYPES[n]))
+            modSpawnX = modSpawnX + Mod.radius * 2
+        end
+        modSpawnX = x
+        modSpawnY = modSpawnY + Mod.radius * 2
     end
 end
 

@@ -20,6 +20,10 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "Hoove animation",
+                    "id": "c40yd3b9kytdwkdme166i0hl"
+                },
+                {
                     "text": "Tutorial area, where you have to hoover up some resources, can play with mods, and then hoover the play button",
                     "id": "e4wpwcap60um9g8wxiofgm7s"
                 },
@@ -143,5 +147,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735453284306
+    "timestamp": 1735454507653
 }

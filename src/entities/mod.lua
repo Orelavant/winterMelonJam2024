@@ -43,7 +43,7 @@ Mod.hooverSpeed = 75
 function Mod:new(x, y, color, speed, modType)
     Mod.super.new(self, x, y, 0, 0, Mod.radius, speed, color)
     self.modType = modType
-	self.modFunc = Mod.MOD_TYPES[modType]
+	self.modFunc = Mod.MOD_FUNCS[modType]
     self.modImage = Mod.MOD_IMGS[modType]
 end
 
