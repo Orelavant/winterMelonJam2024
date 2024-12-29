@@ -24,8 +24,8 @@ Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 Player.inittMoveRange = 120
 Player.initHooverRange = 75
-Player.tMoveRangeAddition = 15
-Player.hooverRangeAddition = 12
+Player.tMoveRangeAddition = 5
+Player.hooverRangeAddition = 5
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -88,6 +88,7 @@ function Player:drawChain()
 	for i,circle in ipairs(self.chain) do
 		circle:draw()
 
+        -- Draw areas of influence
         if i == #self.chain then
             love.graphics.setColor({1, 1, 1, 0.3})
             love.graphics.circle(
@@ -356,7 +357,7 @@ function Player:initChain()
 	local currhChainColor = Player.hColor
 	local currtChainColor = Player.tColor
 
-	-- Consider head
+	-- Consider head and tail
 	local chainCount = self.chainCount - 1
 
     -- Rand n for fun mod color
@@ -389,7 +390,7 @@ function Player:initChain()
             currChainColor = currtChainColor
         end
 
-        -- Saving last color for mod spawns
+        -- Saving random color for mod spawns
         if i == n then
             self.modColor = currChainColor
         end
