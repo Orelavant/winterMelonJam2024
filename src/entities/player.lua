@@ -25,8 +25,8 @@ Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
 Player.inittMoveRange = 80
 Player.initHooverRange = 60
-Player.tMoveRangeAddition = 0
-Player.hooverRangeAddition = 0
+Player.tMoveRangeAddition = 5
+Player.hooverRangeAddition = 5
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -41,8 +41,8 @@ function Player:new(x, y)
     self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
 	-- Head vars
-	self.hX = x
-	self.hY = y
+	self.headX = x
+	self.headY = y
 	self.hNonZeroDx = 0
 	self.hNonZeroDy = -1
 
@@ -200,9 +200,9 @@ function Player:shoot(mouseX, mouseY)
     if #self.bullets > 0 then
         -- Update bullet with default shoot values
         local bullet = self.bullets[#self.bullets]
-        local cos,sin = utils.getSourceTargetAngleComponents(self.hX, self.hY, mouseX, mouseY)
-        bullet.x = self.hX
-        bullet.y = self.hY
+        local cos,sin = utils.getSourceTargetAngleComponents(self.headX, self.headY, mouseX, mouseY)
+        bullet.x = self.headX
+        bullet.y = self.headY
         bullet.radius = Bullet.radius
         bullet.dx = cos
         bullet.dy = sin
@@ -282,7 +282,7 @@ function Player:updateHead(circle, dt)
     circle:update(dt)
 
     -- Update location of head
-    self.hX, self.hY = circle.x, circle.y
+    self.headX, self.headY = circle.x, circle.y
 end
 
 function Player:updateTail(mouseX, mouseY, mouseDist, circle, dt)
@@ -377,8 +377,8 @@ function Player:removeFromChain(n)
         if n == 1 then
             num = 1
             local mod = self.mods[num]
-            mod.x = self.hX + Player.radius * 2 * self.hNonZeroDx
-            mod.y = self.hY + Player.radius * 2 * self.hNonZeroDy
+            mod.x = self.headX + Player.radius * 2 * self.hNonZeroDx
+            mod.y = self.headY + Player.radius * 2 * self.hNonZeroDy
             mod.dx = self.hNonZeroDx
             mod.dy = self.hNonZeroDy
             mod.speed = love.math.random(Mod.minVomitSpeed, Mod.maxVomitSpeed)
@@ -386,6 +386,7 @@ function Player:removeFromChain(n)
 
             table.insert(DormantModTable, mod)
         else
+            -- Enemy collision with chain
             -- n-1 because n (target) was determined via chain, so that included the head.
             num = n-1
         end
@@ -408,7 +409,7 @@ function Player:initChain()
 	local chainCount = self.chainCount - 1
 
     -- Add head
-	self.head = Circle(self.hX, self.hY, 0, 0, Player.radius, Player.speed, Player.hColor)
+	self.head = Circle(self.headX, self.headY, 0, 0, Player.radius, Player.speed, Player.hColor)
     table.insert(self.chain, self.head)
 
 	-- Populate chain

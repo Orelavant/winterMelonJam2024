@@ -122,9 +122,13 @@ function love.update(dt)
                 if j == 1 then
                     EndGame()
                 elseif j == #Player.chain then
-                    Player.bullets = {}
+                    if #Player.bullets > 0 then
+                        Player.bullets = {}
+                    else
+                        EndGame()
+                    end
                 else
-                    Player:removeFromChain(enemy.target.n)
+                    Player:removeFromChain(j)
                 end
 
                 table.remove(EnemyTable, i)
@@ -180,7 +184,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "b" then
-		spawnBullets(Player.hX, Player.hY, 5, 5)
+		spawnBullets(Player.headX, Player.headY, 5, 5)
 	end
 
 	if DebugMode and key == "v" then
@@ -188,7 +192,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "c" then
-        spawnMods(Player.hX, Player.hY, Player.radius, 2, 2)
+        spawnMods(Player.headX, Player.headY, Player.radius, 2, 2)
 	end
 end
 
@@ -258,8 +262,7 @@ function spawnMod(x, y, radius, modType)
 end
 
 function spawnEnemies(x, y)
-    local n = love.math.random(#DormantModTable)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, {n=1, circ=Player.chain[1]}))
+	table.insert(EnemyTable, EnemyInit(x, y, 0, 0))
 end
 
 -- make error handling nice
