@@ -111,6 +111,11 @@ function love.mousepressed(x, y, button)
     if button == 1 then
         Player:shoot(x, y)
     end
+
+    -- Toss up mod
+    if button == 2 then
+        Player:removeFromChain()
+    end
 end
 
 function resetGame()

@@ -349,6 +349,27 @@ function Player:addToChain()
     self:initChain()
 end
 
+function Player:removeFromChain()
+    if #self.mods > 0 then
+        -- Reinit all vars dependent on chain count
+        self.tMoveRange = self.tMoveRange - Player.tMoveRangeAddition
+        self.hooverRange = self.hooverRange - Player.hooverRangeAddition
+        self.chainCount = self.chainCount - 1
+        self.headFollowerCount = math.ceil(self.chainCount * Player.headFollowerCountScalar)
+        self.chainSpeedReduction = (Player.startingChainSpeed / self.chainCount)
+        self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
+
+        -- Remove from mods
+        local mod = self.mods[1]
+        mod.x = self.hX
+        mod.y = self.hY
+        table.insert(DormantModTable, self.mods[1])
+        table.remove(self.mods, 1)
+
+        self:initChain()
+    end
+end
+
 function Player:initChain()
     -- Reset chain
     self.chain = {}
