@@ -15,8 +15,8 @@ Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 Bullet.initModTimer = 0.5
 
 ---Constructor
-function Bullet:new(x, y, dx, dy, color)
-    Bullet.super.new(self, x, y, dx, dy, Bullet.radius, Bullet.shootSpeed, color, Bullet.screenColType)
+function Bullet:new(x, y, dx, dy, radius, speed, color)
+    Bullet.super.new(self, x, y, dx, dy, radius, speed, color, Bullet.screenColType)
     self.bulletStorageXOffset = 0
     self.bulletStorageYOffset = 0
 
@@ -75,6 +75,7 @@ function Bullet:applyMod(dt)
 end
 
 function Bullet:split()
+    -- Get new angles
     -- Get angle of current directions
     local angle = math.atan2(self.dy, self.dx)
 
@@ -86,8 +87,13 @@ function Bullet:split()
     local cos1,sin1 = math.cos(angle1), math.sin(angle1)
     local cos2,sin2 = math.cos(angle2), math.sin(angle2)
 
+    -- Make bullets smaller
+    if self.radius >= 1 then
+        self.radius = self.radius - 1
+    end
+
     -- New active bullet
-    local newBullet = Bullet(self.x, self.y, cos1, sin1, self.color)
+    local newBullet = Bullet(self.x, self.y, cos1, sin1, self.radius, self.speed, self.color)
     newBullet.modTimer = Bullet.initModTimer
     newBullet.mods = self.mods
     newBullet.currMod = self.currMod + 1

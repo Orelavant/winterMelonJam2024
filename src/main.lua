@@ -85,7 +85,7 @@ function love.keypressed(key)
     if DebugMode and key == "b" then
         for i=1,5 do
             for j=1,50 do
-                table.insert(DormantBulletTable, Bullet(100+offsetX, 100+offsetY, 0, 0, DarkBlue))
+                table.insert(DormantBulletTable, Bullet(100+offsetX, 100+offsetY, 0, 0, Bullet.radius, Bullet.shootSpeed, DarkBlue))
                 offsetX = offsetX + 10
             end
             offsetY = offsetY + 10
