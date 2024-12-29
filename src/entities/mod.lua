@@ -36,6 +36,9 @@ Mod.MOD_IMGS = {
 Mod.MOD_FUNCS = Bullet.MOD_FUNCS
 Mod.radius = 15
 Mod.hooverSpeed = 75
+Mod.maxVomitSpeed = 800
+Mod.minVomitSpeed = 400
+Mod.vomitSpeedDecayTime = 0.2
 
 ---Constructor
 --- Refactor this so you don't have to add modType and modFunc
@@ -44,6 +47,19 @@ function Mod:new(x, y, radius, color, speed, modType)
     self.modType = modType
 	self.modFunc = Mod.MOD_FUNCS[modType]
     self.modImage = Mod.MOD_IMGS[modType]
+
+    self.vomitSpeedDecayPerSecond = 0
+end
+
+function Mod:update(dt)
+    -- Decaying speed
+    if self.speed > 0 then
+        self.speed = self.speed - self.vomitSpeedDecayPerSecond * dt
+    else
+        self.speed = 0
+    end
+
+    Mod.super.update(self, dt)
 end
 
 function Mod:draw()

@@ -49,6 +49,7 @@ function StartTutorial()
 	EnemyTable = {}
 	DormantBulletTable = {}
 	DormantModTable = {}
+    AllModTable = {}
 
 	-- Spawn tutorial areas
 	local bulletSpawnRows = 5
@@ -77,6 +78,7 @@ function StartGame()
 	ActiveBulletTable = {}
 	EnemyTable = {}
 	DormantBulletTable = {}
+    AllModTable = {}
 	DormantModTable = {}
 end
 
@@ -103,6 +105,11 @@ function love.update(dt)
 		end
 	end
 
+    -- Update mods
+    for _,mod in ipairs(DormantModTable) do
+        mod:update(dt)
+    end
+
 	-- Update enemies
 	for i = #EnemyTable, 1, -1 do
         -- Move enemy
@@ -117,10 +124,18 @@ function love.update(dt)
                 elseif j == #Player.chain then
                     Player.bullets = {}
                 else
-                    Player:removeFromChain()
+                    Player:removeFromChain(enemy.target.n)
                 end
 
                 table.remove(EnemyTable, i)
+            end
+        end
+
+        -- Mod collision
+        for k=#DormantModTable,1,-1 do
+            if enemy:checkCircleCollision(DormantModTable[k]) then
+                table.remove(EnemyTable, i)
+                table.remove(DormantModTable, k)
             end
         end
 
@@ -185,7 +200,7 @@ function love.mousepressed(x, y, button)
 
 	-- Toss up mod
 	if button == 2 then
-		Player:removeFromChain()
+		Player:removeFromChain(1)
 	end
 end
 
@@ -224,8 +239,10 @@ function spawnMods(x, y, rows, columns, modType)
 			local n = love.math.random(#Mod.MOD_TYPES)
 			if modType == nil then
 				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
+				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
 			else
 				table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
+				table.insert(AllModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
 			end
 			modSpawnX = modSpawnX + Mod.radius * 3
 		end
@@ -235,8 +252,8 @@ function spawnMods(x, y, rows, columns, modType)
 end
 
 function spawnEnemies(x, y)
-    local n = love.math.random(#Player.chain)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, Player.chain[n]))
+    local n = love.math.random(#DormantModTable)
+	table.insert(EnemyTable, EnemyInit(x, y, 0, 0, {n=n, circ=Player.chain[n]}))
 end
 
 -- make error handling nice

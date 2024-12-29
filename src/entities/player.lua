@@ -361,7 +361,7 @@ function Player:addToChain()
     self:initChain()
 end
 
-function Player:removeFromChain()
+function Player:removeFromChain(n)
     if #self.mods > 0 then
         -- Reinit all vars dependent on chain count
         self.tMoveRange = self.tMoveRange - Player.tMoveRangeAddition
@@ -372,11 +372,25 @@ function Player:removeFromChain()
         self.chainSpeedReductionOffset = (150 / self.chainCount) + (Player.radius / 5)
 
         -- Remove from mods
-        local mod = self.mods[1]
-        mod.x = self.hX
-        mod.y = self.hY
-        table.insert(DormantModTable, self.mods[1])
-        table.remove(self.mods, 1)
+        local num = 0
+        -- n will only equal 1 when doing vomit
+        if n == 1 then
+            num = 1
+            local mod = self.mods[num]
+            mod.x = self.hX + Player.radius * 2 * self.hNonZeroDx
+            mod.y = self.hY + Player.radius * 2 * self.hNonZeroDy
+            mod.dx = self.hNonZeroDx
+            mod.dy = self.hNonZeroDy
+            mod.speed = love.math.random(Mod.minVomitSpeed, Mod.maxVomitSpeed)
+            mod.vomitSpeedDecayPerSecond = mod.speed / Mod.vomitSpeedDecayTime
+
+            table.insert(DormantModTable, mod)
+        else
+            -- n-1 because n (target) was determined via chain, so that included the head.
+            num = n-1
+        end
+
+        table.remove(self.mods, num)
 
         self:initChain()
     end

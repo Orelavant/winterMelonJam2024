@@ -24,6 +24,14 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "Smoother tail updates (the back updates too quickly)",
+                    "id": "blhb8072xl94p8r24g3dbxcd"
+                },
+                {
+                    "text": "EAT MOD",
+                    "id": "np9zrf64lxgt14zqgmwunxm7"
+                },
+                {
                     "text": "Hoove animation",
                     "id": "c40yd3b9kytdwkdme166i0hl"
                 },
@@ -100,6 +108,10 @@
         {
             "title": "Done",
             "tasks": [
+                {
+                    "text": "Vomit speed and decay is much sharper",
+                    "id": "mqzhhymqcakav8fte63kpg66"
+                },
                 {
                     "text": "Petri dish background, for tutorial area.\n\nThen you fall and are on the tiled flooring of a lab",
                     "id": "uw14g5mcib2lrl38o24qvxz1"
@@ -182,5 +194,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735501248913
+    "timestamp": 1735505792154
 }
