@@ -39,8 +39,8 @@ Mod.hooverSpeed = 75
 
 ---Constructor
 --- Refactor this so you don't have to add modType and modFunc
-function Mod:new(x, y, color, speed, modType)
-    Mod.super.new(self, x, y, 0, 0, Mod.radius, speed, color)
+function Mod:new(x, y, radius, color, speed, modType)
+    Mod.super.new(self, x, y, 0, 0, radius, speed, color)
     self.modType = modType
 	self.modFunc = Mod.MOD_FUNCS[modType]
     self.modImage = Mod.MOD_IMGS[modType]

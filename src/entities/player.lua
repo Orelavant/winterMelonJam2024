@@ -23,10 +23,10 @@ Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
-Player.inittMoveRange = 100
-Player.initHooverRange = 75
+Player.inittMoveRange = 120
+Player.initHooverRange = 60
 Player.tMoveRangeAddition = 10
-Player.hooverRangeAddition = 5
+Player.hooverRangeAddition = 10
 Player.consumeRange = 20
 Player.initBulletStorageRadius = Player.radius - Bullet.bulletRadiusStorageSize
 Player.bulletStorageDegreeChange = 10
@@ -123,9 +123,10 @@ function Player:drawBullets()
 end
 
 function Player:hoover(dt)
-    local mouseX, mouseY = love.mouse.getPosition()
-
-    self:hooverResources(mouseX, mouseY, dt)
+    if self.tailMoving then
+        local mouseX, mouseY = love.mouse.getPosition()
+        self:hooverResources(mouseX, mouseY, dt)
+    end
 end
 
 function Player:hooverResources(mouseX, mouseY, dt)
@@ -169,11 +170,6 @@ function Player:hooverMods(mouseX, mouseY, dt)
     for i=#DormantModTable,1,-1 do
         local mod = DormantModTable[i]
 
-        -- Start game check
-        if mod.modType == Mod.MOD_TYPES.play then
-            StartGame()
-        end
-
         local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
         local tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
 
@@ -189,6 +185,12 @@ function Player:hooverMods(mouseX, mouseY, dt)
         -- Remove from global mod table and put in player table
         tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
         if tailToMouseDist <= self.hooverRange and tailToModDist <= Player.consumeRange then
+            -- Start game check
+            if mod.modType == "play" then
+                StartGame()
+            end
+
+            -- Otherwise add mod to self
             table.insert(self.mods, mod)
             table.remove(DormantModTable, i)
             self:addToChain()
@@ -416,7 +418,7 @@ function Player:initChain()
 
         -- Adding to body
         if i < chainCount then
-            table.insert(self.chain, Mod(self.tailX, self.tailY, currChainColor, currChainSpeed, self.mods[i].modType))
+            table.insert(self.chain, Mod(self.tailX, self.tailY, Player.radius, currChainColor, currChainSpeed, self.mods[i].modType))
         else
             -- Adding tail, which is just a circle
             local circle = Circle(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)

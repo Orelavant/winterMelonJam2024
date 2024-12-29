@@ -8,7 +8,7 @@ local Bullet = Circle:extend()
 
 -- Config
 Bullet.hooverSpeed = 100
-Bullet.shootSpeed = 200
+Bullet.shootSpeed = 250
 Bullet.radius = 5
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete

@@ -6,53 +6,76 @@ else
 	DebugMode = false
 end
 
--- Imports
-local utils = nil
-local background = nil
-
 -- Config
 --- @enum gameStates
 GAME_STATES = { play = 0, done = 1, tutorial = 2 }
-local BulletSpawnCount = nil
-local ModSpawnCount = nil
+local InitGameState = "tutorial"
 
 -- Callbacks
 function love.load()
-    -- Init background image and screen
+    -- Init Background image and screen
     love.window.setMode(1200, 800)
     ScreenWidth = love.graphics.getWidth()
     ScreenHeight = love.graphics.getHeight()
     ScreenWidthBuffer = 200
     ScreenHeightBuffer = 200
-    background = love.graphics.newImage("art/background.png")
+    Background = love.graphics.newImage("art/background.png")
 
     -- Colors
     -- https://lospec.com/palette-list/coldfire-gb
-    utils = require("lib.utils")
-    Cream = utils.normRgba(255, 246, 211)
-    DarkBlue = utils.normRgba(70, 66, 94)
-    LightBlue = utils.normRgba(91, 118, 141)
-    Pink = utils.normRgba(209, 124, 124)
-    Orange = utils.normRgba(246, 198, 168)
+    Utils = require("lib.utils")
+    Cream = Utils.normRgba(255, 246, 211)
+    DarkBlue = Utils.normRgba(70, 66, 94)
+    LightBlue = Utils.normRgba(91, 118, 141)
+    Pink = Utils.normRgba(209, 124, 124)
+    Orange = Utils.normRgba(246, 198, 168)
 
 	-- Init classes
-	Player = require("entities.player")
+	PlayerInit = require("entities.player")
     Bullet = require("entities.bullet")
     Mod = require("entities.mod")
 
 	-- Init objs
-    BulletSpawnCount = 50
-    ModSpawnCount = 10
-    GameState = "tutorial"
-	Player = Player(ScreenWidth / 2, ScreenHeight / 2)
+    GameState = InitGameState
+
+    -- Start tutorial area
+    StartTutorial()
+end
+
+function StartTutorial()
+    -- Spawn Player and init
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight - (ScreenHeight / 4))
     ActiveBulletTable = {}
     DormantBulletTable = {}
     DormantModTable = {}
 
-    -- Start tutorial area
-    if GAME_STATES[GameState] == GAME_STATES.tutorial then
-        spawnBullets(70, ScreenHeight - 150)
-    end
+    -- Spawn tutorial areas
+    local bulletSpawnRows = 5
+    local bulletSpawnColumns = 10
+    local modSpawnRows = 2
+    local modSpawnColumns = 3
+
+    -- Bullet Area
+    spawnBullets(50, ScreenHeight - 150, bulletSpawnRows, bulletSpawnColumns)
+    table.insert(DormantModTable, Mod(140, ScreenHeight - 190, 20, Cream, 0, "one"))
+
+    -- Mod Area
+    spawnMods(ScreenWidth - 140, ScreenHeight - 130, modSpawnRows, modSpawnColumns, "fast")
+    table.insert(DormantModTable, Mod(ScreenWidth - 95, ScreenHeight - 190, 20, Cream, 0, "two"))
+
+    -- Play Button Area
+    table.insert(DormantModTable, Mod(ScreenWidth / 2, 50, 20, Cream, 0, "three"))
+    table.insert(DormantModTable, Mod(ScreenWidth / 2, 100, 20, Cream, 0, "play"))
+end
+
+function StartGame()
+    GameState = "play"
+
+    -- -- Reset
+    -- Player2 = PlayerInit(ScreenWidth / 2, ScreenHeight - (ScreenHeight / 4))
+    -- ActiveBulletTable = {}
+    -- DormantBulletTable = {}
+    -- DormantModTable = {}
 end
 
 function love.update(dt)
@@ -72,9 +95,8 @@ end
 
 function love.draw()
     -- Background image
-    love.graphics.setBackgroundColor(1, 1, 1)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(background)
+    love.graphics.draw(Background)
 
     -- Dormant Bullets
     for _,bullet in ipairs(DormantBulletTable) do
@@ -133,14 +155,12 @@ function resetGame()
 	love.load()
 end
 
-function spawnBullets(x, y)
+function spawnBullets(x, y, rows, columns)
     local bulletSpawnX = x
     local bulletSpawnY = y
-    local rowCount = BulletSpawnCount / 10
-    local colCount = BulletSpawnCount / rowCount
 
-    for i=1,rowCount do
-        for j=1,colCount do
+    for i=1,rows do
+        for j=1,columns do
             table.insert(DormantBulletTable, Bullet(bulletSpawnX, bulletSpawnY, 0, 0, Bullet.radius, Bullet.shootSpeed, DarkBlue))
             bulletSpawnX = bulletSpawnX + Bullet.radius * 4
         end
@@ -149,25 +169,23 @@ function spawnBullets(x, y)
     end
 end
 
-function spawnMods(x, y)
+function spawnMods(x, y, rows, columns, modType)
     local modSpawnX = x
     local modSpawnY = y
-    local rowCount = 3
-    local colCount = 1
 
-    for i=1,rowCount do
-        for j=1,colCount do
+    for i=1,rows do
+        for j=1,columns do
             local n = love.math.random(#Mod.MOD_TYPES)
-            table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Cream, 0, Mod.MOD_TYPES[n]))
-            modSpawnX = modSpawnX + Mod.radius * 2
+            if modType == nil then
+                table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, Mod.MOD_TYPES[n]))
+            else
+                table.insert(DormantModTable, Mod(modSpawnX, modSpawnY, Player.radius, Cream, 0, modType))
+            end
+            modSpawnX = modSpawnX + Mod.radius * 3
         end
         modSpawnX = x
-        modSpawnY = modSpawnY + Mod.radius * 2
+        modSpawnY = modSpawnY + Mod.radius * 3
     end
-end
-
-function StartGame()
-    print("start game")
 end
 
 -- make error handling nice
