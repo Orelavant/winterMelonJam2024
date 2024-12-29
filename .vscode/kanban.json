@@ -20,6 +20,14 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "Tutorial area, where you have to hoover up some resources, can play with mods, and then hoover the play button",
+                    "id": "e4wpwcap60um9g8wxiofgm7s"
+                },
+                {
+                    "text": "Petri dish background",
+                    "id": "uw14g5mcib2lrl38o24qvxz1"
+                },
+                {
                     "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
                     "id": "zqxy6lyzy6t5702irvqrwpik"
                 },
@@ -28,40 +36,36 @@
                     "id": "ct6cdj6hulgecfz8cjd0hlo3"
                 },
                 {
-                    "text": "Module Spitting",
-                    "id": "t3gj08vgbmnpf7zyzz6m732d"
-                },
-                {
                     "text": "Enemies\n- spawn in waves from edges of screen",
                     "id": "gof0mqqnmjiw5vzh4vhke6j1"
-                },
-                {
-                    "text": "Enemy Variety",
-                    "id": "hltn9k2we01j1t7ktnomgyix"
                 },
                 {
                     "text": "Circles have individual health!",
                     "id": "dyj94cuktivjjn960igvhejx"
                 },
                 {
-                    "text": "Expand effect on circle when they do their function, hoover, or shoot.\n- Shoot is delayed by how many body parts you have",
-                    "id": "mdbim84y34awcw50elj7ntwx"
+                    "text": "Hover effect for mods",
+                    "id": "uqcr3urydtigscs4vdc3b4yr"
                 },
                 {
                     "text": "Audio",
                     "id": "tuvntpon4mfkm1pcyf58yvo3"
                 },
                 {
+                    "text": "Expand effect on circle when they do their function, hoover, or shoot.\n- Shoot is delayed by how many body parts you have",
+                    "id": "mdbim84y34awcw50elj7ntwx"
+                },
+                {
                     "text": "Art",
                     "id": "n3d8qrbt8b8uat3nc8djwc43"
                 },
                 {
-                    "text": "Repelling tail can get tricky, consder rework",
-                    "id": "bqr83z43elzxomu06sklazze"
+                    "text": "Enemy Variety",
+                    "id": "hltn9k2we01j1t7ktnomgyix"
                 },
                 {
-                    "text": "Tutorial area, where you have to hoover up some resources, and then shoot the play button",
-                    "id": "e4wpwcap60um9g8wxiofgm7s"
+                    "text": "Repelling tail can get tricky, consder rework",
+                    "id": "bqr83z43elzxomu06sklazze"
                 },
                 {
                     "text": "Triangle hoover zone instead of circle",
@@ -84,6 +88,10 @@
         {
             "title": "Done",
             "tasks": [
+                {
+                    "text": "Module Spitting",
+                    "id": "t3gj08vgbmnpf7zyzz6m732d"
+                },
                 {
                     "text": "Make module color the next color it would be",
                     "id": "aqb8xc3q87cv0lwie8rzb5ix"
@@ -127,5 +135,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735440588735
+    "timestamp": 1735450727951
 }

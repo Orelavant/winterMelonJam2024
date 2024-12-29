@@ -6,6 +6,8 @@ local utils = require("lib.utils")
 -- Art assets
 local splitImg = love.graphics.newImage("art/split.png")
 local fastImg = love.graphics.newImage("art/fast.png")
+local reverseImg = love.graphics.newImage("art/reverse.png")
+local enlargenImg = love.graphics.newImage("art/enlargen.png")
 
 ---@class Mod:Circle
 local Mod = Circle:extend()
@@ -14,14 +16,18 @@ local Mod = Circle:extend()
 Mod.MOD_TYPES = {
     "split",
     "fast",
+    "reverse",
+    "enlargen"
 }
 Mod.MOD_IMGS = {
     split=splitImg,
-    fast=fastImg
+    fast=fastImg,
+    reverse=reverseImg,
+    enlargen=enlargenImg,
 }
 Mod.MOD_FUNCS = Bullet.MOD_FUNCS
 Mod.radius = 15
-Mod.hooverSpeed = 50
+Mod.hooverSpeed = 75
 
 ---Constructor
 --- Refactor this so you don't have to add modType and modFunc
@@ -35,7 +41,7 @@ end
 function Mod:draw()
     Mod.super.draw(self)
     love.graphics.setColor({1, 1, 1})
-    love.graphics.draw(self.modImage, self.x, self.y, 0, 2, 2, self.modImage:getWidth() / 2, self.modImage:getHeight() / 2)
+    love.graphics.draw(self.modImage, self.x, self.y, 0, 1, 1, self.modImage:getWidth() / 2, self.modImage:getHeight() / 2)
 end
 
 function Mod:hoover(cos, sin, dist, dt)

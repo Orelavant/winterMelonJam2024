@@ -14,6 +14,7 @@ Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 Bullet.initModTimer = 0.3
 Bullet.speedMod = 100
+Bullet.enlargenMod = 2
 
 ---Constructor
 function Bullet:new(x, y, dx, dy, radius, speed, color)
@@ -110,16 +111,19 @@ function Bullet:fast()
     self.speed = self.speed + Bullet.speedMod
 end
 
-function Bullet:trap()
+function Bullet:reverse()
+    self.dx = -self.dx
+    self.dy = -self.dy
 end
 
 function Bullet:enlargen()
+    self.radius = self.radius + Bullet.enlargenMod
 end
 
 Bullet.MOD_FUNCS = {
     split=Bullet.split,
     fast=Bullet.fast,
-    trap=Bullet.trap,
+    reverse=Bullet.reverse,
     enlargen=Bullet.enlargen
 }
 

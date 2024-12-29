@@ -77,10 +77,10 @@ function Circle:handleBounceScreenCollision()
 end
 
 function Circle:handleDeleteScreenCollision()
-	self.removeFlag = self.x - self.radius <= 0
-		or self.x + self.radius >= ScreenWidth
-		or self.y - self.radius <= 0
-		or self.y + self.radius >= ScreenHeight
+	self.removeFlag = self.x - self.radius <= 0 - ScreenWidthBuffer
+		or self.x + self.radius >= ScreenWidth + ScreenWidthBuffer
+		or self.y - self.radius <= 0 - ScreenHeightBuffer
+		or self.y + self.radius >= ScreenHeight + ScreenHeightBuffer
 end
 
 function Circle:checkCircleCollision(circle)

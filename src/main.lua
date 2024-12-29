@@ -16,9 +16,12 @@ GAME_STATES = { play = 0, done = 1, menu = 2 }
 love.window.setMode(1000, 800)
 ScreenWidth = love.graphics.getWidth()
 ScreenHeight = love.graphics.getHeight()
+ScreenWidthBuffer = 200
+ScreenHeightBuffer = 200
 
 -- Colors
 -- https://lospec.com/palette-list/coldfire-gb
+Cream = utils.normRgba(255, 246, 211)
 DarkBlue = utils.normRgba(70, 66, 94)
 LightBlue = utils.normRgba(91, 118, 141)
 Pink = utils.normRgba(209, 124, 124)
@@ -94,13 +97,14 @@ function love.keypressed(key)
         end
     end
 
-    if DebugMode and key == "v" then
-        Player:addToChain()
-    end
+    -- Fix later
+    -- if DebugMode and key == "v" then
+    --     Player:addToChain()
+    -- end
 
     if DebugMode and key == "c" then
         local n = love.math.random(#Mod.MOD_TYPES)
-        local newMod = Mod(200+offsetX, 200, {1, 1, 1}, 0, Mod.MOD_TYPES[n])
+        local newMod = Mod(200+offsetX, 200, Cream, 0, Mod.MOD_TYPES[n])
         table.insert(DormantModTable, newMod)
         offsetX = offsetX + 50
     end
