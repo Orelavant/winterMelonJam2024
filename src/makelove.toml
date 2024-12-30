@@ -1,4 +1,4 @@
-name = "melonJam2024Game"
+name = "winterMelonJam2024Game"
 default_targets = ["win32", "win64", "macos", "lovejs"]
 build_directory = "../bin"
 

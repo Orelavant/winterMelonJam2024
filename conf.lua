@@ -1,4 +1,4 @@
 function love.conf(t)
-    t.window.title = "melonJam2024Game"
+    t.window.title = "winterMelonJam2024Game"
 end
 
