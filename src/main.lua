@@ -49,7 +49,6 @@ function StartTutorial()
 	EnemyTable = {}
 	DormantBulletTable = {}
 	DormantModTable = {}
-    AllModTable = {}
 
 	-- Spawn tutorial areas
 	local bulletSpawnRows = 5
@@ -59,15 +58,15 @@ function StartTutorial()
 
 	-- Bullet Area
 	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
-    spawnMod(140, 90, 20, "one")
+	spawnMod(140, 90, 20, "one")
 
 	-- Mod Area
-	spawnMods(ScreenWidth / 8, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
+	spawnMods(ScreenWidth - 150, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
 	spawnMod(ScreenWidth - 105, 80, 20, "two")
 
 	-- Play Button Area
-	spawnMod(ScreenWidth / 2, ScreenHeight / 2, 20,  "three")
-    spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "play")
+	spawnMod(ScreenWidth / 2, ScreenHeight / 2, 20, "three")
+	spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "play")
 end
 
 function StartGame()
@@ -78,11 +77,39 @@ function StartGame()
 	ActiveBulletTable = {}
 	EnemyTable = {}
 	DormantBulletTable = {}
-    AllModTable = {}
 	DormantModTable = {}
+
+	-- New Values
+	EnemySpawnLocations = {
+		{ x = ScreenWidth / 2, y = 0 },
+		{ x = ScreenWidth, y = ScreenHeight / 2 },
+		{ x = ScreenWidth / 2, y = ScreenHeight },
+		{ x = 0, y = ScreenHeight / 2 },
+	}
+	BulletSpawnRows = 3
+	BulletSpawnColumns = 3
+
+	-- Init timers
+	WaveCount = 0
+	InitBulletSpawnTime = 2
+	BulletSpawnTimer = InitBulletSpawnTime
+	BulletSpawnRate = 10
+	InitModSpawnTime = 3
+	ModSpawnTimer = InitModSpawnTime
+	ModSpawnRate = 15
+	InitEnemySpawnTime = 4
+	EnemySpawnTimer = InitEnemySpawnTime
+	EnemySpawnRate = 12
 end
 
 function love.update(dt)
+	if GAME_STATES[GameState] == GAME_STATES.play then
+		-- Spawns
+		manageBulletSpawns(dt)
+		manageModSpawns(dt)
+		manageEnemySpawns(dt)
+	end
+
 	-- Update player
 	Player:update(dt)
 
@@ -105,46 +132,46 @@ function love.update(dt)
 		end
 	end
 
-    -- Update mods
-    for _,mod in ipairs(DormantModTable) do
-        mod:update(dt)
-    end
+	-- Update mods
+	for _, mod in ipairs(DormantModTable) do
+		mod:update(dt)
+	end
 
 	-- Update enemies
 	for i = #EnemyTable, 1, -1 do
-        -- Move enemy
+		-- Move enemy
 		local enemy = EnemyTable[i]
 		enemy:update(dt)
 
-        -- Player collision
-        for j,circle in ipairs(Player.chain) do
-            if enemy:checkCircleCollision(circle) then
-                if j == 1 then
-                    EndGame()
-                elseif j == #Player.chain then
-                    if #Player.bullets > 0 then
-                        Player.bullets = {}
-                    else
-                        EndGame()
-                    end
-                else
-                    Player:removeFromChain(j)
-                end
+		-- Player collision
+		for j, circle in ipairs(Player.chain) do
+			if enemy:checkCircleCollision(circle) then
+				if j == 1 then
+					EndGame()
+				elseif j == #Player.chain then
+					if #Player.bullets > 0 then
+						Player.bullets = {}
+					else
+						EndGame()
+					end
+				else
+					Player:removeFromChain(j)
+				end
 
-                table.remove(EnemyTable, i)
-            end
-        end
+				table.remove(EnemyTable, i)
+			end
+		end
 
-        -- Mod collision
-        for k=#DormantModTable,1,-1 do
-            if enemy:checkCircleCollision(DormantModTable[k]) then
-                table.remove(EnemyTable, i)
-                table.remove(DormantModTable, k)
-            end
-        end
+		-- Mod collision
+		for k = #DormantModTable, 1, -1 do
+			if enemy:checkCircleCollision(DormantModTable[k]) then
+				table.remove(EnemyTable, i)
+				table.remove(DormantModTable, k)
+			end
+		end
 
-        -- TODO push enemies apart from one another
-        -- Enemy collision
+		-- TODO push enemies apart from one another
+		-- Enemy collision
 	end
 end
 
@@ -192,7 +219,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "c" then
-        spawnMods(Player.headX, Player.headY, Player.radius, 2, 2)
+		spawnMods(Player.headX, Player.headY, Player.radius, 2, 2)
 	end
 end
 
@@ -213,9 +240,41 @@ function resetGame()
 end
 
 function EndGame()
-    print("you lose")
+	print("you lose")
 end
 
+function manageBulletSpawns(dt)
+	if BulletSpawnTimer >= 0 then
+		BulletSpawnTimer = BulletSpawnTimer - dt
+	else
+		spawnBullets(
+			love.math.random(ScreenWidth - 100),
+			love.math.random(ScreenHeight - 100),
+			BulletSpawnRows,
+			BulletSpawnColumns
+		)
+		BulletSpawnTimer = BulletSpawnRate
+	end
+end
+
+function manageModSpawns(dt)
+	if ModSpawnTimer >= 0 then
+		ModSpawnTimer = ModSpawnTimer - dt
+	else
+		spawnMods(love.math.random(ScreenWidth - 50), love.math.random(ScreenHeight - 50), Player.radius, 1, 1)
+		ModSpawnTimer = ModSpawnRate
+	end
+end
+
+function manageEnemySpawns(dt)
+	if EnemySpawnTimer >= 0 then
+		EnemySpawnTimer = EnemySpawnTimer - dt
+	else
+		spawnEnemies(5 + WaveCount)
+		EnemySpawnTimer = EnemySpawnRate
+		WaveCount = WaveCount + 1
+	end
+end
 
 function spawnBullets(x, y, rows, columns)
 	local bulletSpawnX = x
@@ -240,7 +299,7 @@ function spawnMods(x, y, radius, rows, columns, modType)
 
 	for i = 1, rows do
 		for j = 1, columns do
-            spawnMod(modSpawnX, modSpawnY, radius, modType)
+			spawnMod(modSpawnX, modSpawnY, radius, modType)
 			modSpawnX = modSpawnX + Mod.radius * 3
 		end
 		modSpawnX = x
@@ -249,20 +308,23 @@ function spawnMods(x, y, radius, rows, columns, modType)
 end
 
 function spawnMod(x, y, radius, modType)
-    local mod = nil
+	local mod = nil
 
-    if modType == nil then
-        local n = love.math.random(#Mod.MOD_TYPES)
-        mod = Mod(x, y, radius, Cream, 0, Mod.MOD_TYPES[n])
-    else
-        mod = Mod(x, y, radius, Cream, 0, modType)
-    end
+	if modType == nil then
+		local n = love.math.random(#Mod.MOD_TYPES)
+		mod = Mod(x, y, radius, Cream, 0, Mod.MOD_TYPES[n])
+	else
+		mod = Mod(x, y, radius, Cream, 0, modType)
+	end
 
-    table.insert(DormantModTable, mod)
+	table.insert(DormantModTable, mod)
 end
 
-function spawnEnemies(x, y)
-	table.insert(EnemyTable, EnemyInit(x, y, 0, 0))
+function spawnEnemies(n)
+	for i = 1, n do
+		local spawn = EnemySpawnLocations[love.math.random(#EnemySpawnLocations)]
+		table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
+	end
 end
 
 -- make error handling nice

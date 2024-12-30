@@ -24,36 +24,36 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "fix enemy tracking (there exists a branch for this)",
-                    "id": "e6th8fiallehl25an6txf8fu"
-                },
-                {
-                    "text": "Smoother tail updates (the back updates too quickly)",
-                    "id": "blhb8072xl94p8r24g3dbxcd"
-                },
-                {
-                    "text": "Hoove animation",
-                    "id": "c40yd3b9kytdwkdme166i0hl"
-                },
-                {
-                    "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
-                    "id": "zqxy6lyzy6t5702irvqrwpik"
-                },
-                {
-                    "text": "Module Effects",
-                    "id": "ct6cdj6hulgecfz8cjd0hlo3"
+                    "text": "SPAWN STUFF",
+                    "id": "lzcqfatfe286rmti4f7cwx4i"
                 },
                 {
                     "text": "Enemies\n- spawn in waves from edges of screen",
                     "id": "gof0mqqnmjiw5vzh4vhke6j1"
                 },
                 {
+                    "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
+                    "id": "zqxy6lyzy6t5702irvqrwpik"
+                },
+                {
+                    "text": "MUSIC",
+                    "id": "ki13ikas8jlhvf6pw0j3pd4b"
+                },
+                {
+                    "text": "AUDIO",
+                    "id": "upsnwogqbkgcw1op65pvpt1y"
+                },
+                {
                     "text": "Score",
                     "id": "hzixyv5l6g0nar7da7sj9wuf"
                 },
                 {
-                    "text": "Circles have individual health!",
-                    "id": "dyj94cuktivjjn960igvhejx"
+                    "text": "Hoove animation",
+                    "id": "c40yd3b9kytdwkdme166i0hl"
+                },
+                {
+                    "text": "Smoother tail updates (the back updates too quickly)",
+                    "id": "blhb8072xl94p8r24g3dbxcd"
                 },
                 {
                     "text": "Hover effect for mods",
@@ -94,6 +94,10 @@
                 {
                     "text": "What if you got mods by defeating enemies? like some enemies are marked by mod type?",
                     "id": "cdj9f1u02952w9ocodcadqhm"
+                },
+                {
+                    "text": "enemy track fallen mods",
+                    "id": "e6th8fiallehl25an6txf8fu"
                 }
             ],
             "id": "h2foyzaubqo094docfr9rh7g",
@@ -127,6 +131,14 @@
                 {
                     "text": "Module Spitting",
                     "id": "t3gj08vgbmnpf7zyzz6m732d"
+                },
+                {
+                    "text": "Circles have individual health!",
+                    "id": "dyj94cuktivjjn960igvhejx"
+                },
+                {
+                    "text": "Module Effects",
+                    "id": "ct6cdj6hulgecfz8cjd0hlo3"
                 },
                 {
                     "text": "Make module color the next color it would be",
@@ -198,5 +210,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735513363934
+    "timestamp": 1735515908040
 }

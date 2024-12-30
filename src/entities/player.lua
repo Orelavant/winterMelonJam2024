@@ -85,7 +85,8 @@ end
 
 function Player:drawChain()
 	-- Draw chain
-	for i,circle in ipairs(self.chain) do
+	for i=#self.chain,1,-1 do
+        local circle = self.chain[i]
 		circle:draw()
 
         -- Draw areas of influence
