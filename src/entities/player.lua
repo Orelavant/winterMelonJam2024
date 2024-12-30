@@ -199,6 +199,7 @@ function Player:hooverMods(mouseX, mouseY, dt)
 
                     -- Start game/tutorial checks
                     if mod.modType == "play" then
+                        TutorialComplete = true
                         StartGame()
                     elseif mod.modType == "one" then
                         spawnEnemy(2)
@@ -207,6 +208,14 @@ function Player:hooverMods(mouseX, mouseY, dt)
                         spawnEnemy(4)
                         spawnEnemy(4)
                         spawnEnemy(4)
+                    end
+
+                    -- Start wave after consuming mod
+                    if not StartOfWave and not ActiveWave and #DormantModTable <= 3 and GameState ~= "tutorial" then
+                        StartOfWave = true
+                        ActiveWave = false
+                        SpawnedMods = false
+                        DormantModTable = {}
                     end
 
                     -- Otherwise add mod to self
@@ -233,8 +242,8 @@ function Player:shoot(mouseX, mouseY)
         bullet.dy = sin
 
         -- Add mods to bullet
-        for i=#self.mods,1,-1 do
-            table.insert(bullet.mods, self.mods[i].modFunc)
+        for _,mod in ipairs(self.mods) do
+            table.insert(bullet.mods, mod.modFunc)
         end
 
         -- Add to active bullets, remove from self
@@ -466,7 +475,7 @@ function Player:initChain()
 
         -- Adding to body
         if i < chainCount then
-            table.insert(self.chain, Mod(self.tailX, self.tailY, Player.radius, currChainColor, currChainSpeed, self.mods[chainCount - i].modType))
+            table.insert(self.chain, Mod(self.tailX, self.tailY, Player.radius, currChainColor, currChainSpeed, self.mods[i].modType))
         else
             -- Adding tail, which is just a circle
             local circle = Circle(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)

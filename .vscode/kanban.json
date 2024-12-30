@@ -28,8 +28,12 @@
             "title": "To-Do",
             "tasks": [
                 {
-                    "text": "If tail get hits lose bullets first?",
-                    "id": "jhn4c7ikiqlhxtfbgv8hozm2"
+                    "text": "Add a good ending after a certain high score (and then you can keep going if you want)",
+                    "id": "ogwqro6to8uu8igbjg7ml2rh"
+                },
+                {
+                    "text": "buffer for enemy spawn within wave",
+                    "id": "cgl54g5xczlbk7smp2ifuj0n"
                 },
                 {
                     "text": "enemy push each other apart",
@@ -38,18 +42,6 @@
                 {
                     "text": "Enemies\n- spawn in waves from edges of screen",
                     "id": "gof0mqqnmjiw5vzh4vhke6j1"
-                },
-                {
-                    "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
-                    "id": "zqxy6lyzy6t5702irvqrwpik"
-                },
-                {
-                    "text": "MUSIC",
-                    "id": "ki13ikas8jlhvf6pw0j3pd4b"
-                },
-                {
-                    "text": "Score",
-                    "id": "hzixyv5l6g0nar7da7sj9wuf"
                 },
                 {
                     "text": "Hoove animation",
@@ -64,14 +56,6 @@
                     "id": "uqcr3urydtigscs4vdc3b4yr"
                 },
                 {
-                    "text": "Audio",
-                    "id": "tuvntpon4mfkm1pcyf58yvo3"
-                },
-                {
-                    "text": "Spitting module sends it flying a bit",
-                    "id": "hzf2z3fjc1r5thl5vf3c8pyt"
-                },
-                {
                     "text": "Expand effect on circle when they do their function, hoover, or shoot.\n- Shoot is delayed by how many body parts you have",
                     "id": "mdbim84y34awcw50elj7ntwx"
                 },
@@ -82,10 +66,6 @@
                 {
                     "text": "Enemy Variety",
                     "id": "hltn9k2we01j1t7ktnomgyix"
-                },
-                {
-                    "text": "Repelling tail can get tricky, consder rework",
-                    "id": "bqr83z43elzxomu06sklazze"
                 },
                 {
                     "text": "Triangle hoover zone instead of circle",
@@ -125,6 +105,30 @@
         {
             "title": "Done",
             "tasks": [
+                {
+                    "text": "Repelling tail can get tricky, consder rework",
+                    "id": "bqr83z43elzxomu06sklazze"
+                },
+                {
+                    "text": "Spitting module sends it flying a bit",
+                    "id": "hzf2z3fjc1r5thl5vf3c8pyt"
+                },
+                {
+                    "text": "Score",
+                    "id": "hzixyv5l6g0nar7da7sj9wuf"
+                },
+                {
+                    "text": "Audio",
+                    "id": "tuvntpon4mfkm1pcyf58yvo3"
+                },
+                {
+                    "text": "Bullet/Module Random Spawning\n- bullets spawn in corners",
+                    "id": "zqxy6lyzy6t5702irvqrwpik"
+                },
+                {
+                    "text": "MUSIC",
+                    "id": "ki13ikas8jlhvf6pw0j3pd4b"
+                },
                 {
                     "text": "AUDIO",
                     "id": "upsnwogqbkgcw1op65pvpt1y"
@@ -253,5 +257,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735541358408
+    "timestamp": 1735548596853
 }

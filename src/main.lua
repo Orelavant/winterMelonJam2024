@@ -58,6 +58,7 @@ function love.load()
 	-- Init state
 	--- @enum gameStates
 	GAME_STATES = { play = 0, over = 1, tutorial = 2 }
+    TutorialComplete = false
 
     -- Start game mode
 	if DebugMode then
@@ -69,15 +70,79 @@ function love.load()
 	end
 end
 
-function love.update(dt)
-	if GAME_STATES[GameState] == GAME_STATES.play and AllEnemiesDead then
-		-- Spawns
-		manageBulletSpawns(dt)
-		manageModSpawns(dt)
-		manageEnemySpawns(dt)
-	end
+function StartTutorial()
+    resetGlobalVars()
+    GameState = "tutorial"
 
+	-- Audio
+	UltraLoungeSong:setLooping(true)
+	UltraLoungeSong:play()
+
+	-- Spawn Player and init
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 6)
+
+	-- Spawn tutorial areas
+	local bulletSpawnRows = 5
+	local bulletSpawnColumns = 10
+	local modSpawnRows = 2
+	local modSpawnColumns = 3
+
+	-- Bullet Area
+	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
+	spawnMod(140, 90, 20, "one")
+
+	-- Mod Area
+	spawnMods(ScreenWidth - 150, 60, Player.radius, modSpawnRows, modSpawnColumns, 3, "fast")
+	spawnMod(ScreenWidth - 105, 80, 20, "two")
+
+	-- Play Button Area
+	spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "three")
+	spawnMod(ScreenWidth / 2, ScreenHeight / 1.6, 20, "play")
+end
+
+function StartGame()
+    resetGlobalVars()
+	GameState = "play"
+
+	-- Audio
+	UltraLoungeSong:stop()
+	CheeZeeLabSong:setLooping(true)
+	CheeZeeLabSong:play()
+
+	-- Reset
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
+
+	-- New Values
+	BulletSpawnRows = 5
+	BulletSpawnColumns = 5
+
+	-- Inital spawns
+	spawnBullets(ScreenWidth / 3, ScreenHeight / 4, BulletSpawnRows, BulletSpawnColumns)
+
+	-- Init timers
+	InitBulletSpawnTime = 20
+	BulletSpawnTimer = InitBulletSpawnTime
+	BulletSpawnRate = 20
+
+	WaveCount = 1
+    WaveCountAddition = 3
+    WaveCurrSpawnCount = 0
+    WaveSpawnComplete = true
+    WaveSpawnBufferTimerInit = 0.5
+    WaveSpawnBufferTimer = WaveSpawnBufferTimerInit
+
+    -- Refactor this to state machine
+    StartOfWave = true
+    ActiveWave = false
+    SpawnedMods = false
+end
+
+function love.update(dt)
 	if GAME_STATES[GameState] ~= GAME_STATES.over then
+        manageBulletSpawns(dt)
+        manageEnemySpawns(dt)
+        manageModSpawns()
+
 		screenShakeUpdate(dt)
 
 		-- Update player
@@ -135,7 +200,9 @@ function love.update(dt)
 				end
 			end
 		else
-			AllEnemiesDead = true
+            if WaveSpawnComplete then
+                ActiveWave = false
+            end
 		end
 	end
 end
@@ -186,7 +253,11 @@ end
 function love.keypressed(key)
 	-- Reset game
 	if key == "r" then
-        StartGame()
+        if TutorialComplete then
+            StartGame()
+        else
+            StartTutorial()
+        end
 	end
 
     if GameState == "play" and key == "space" then
@@ -202,7 +273,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "c" then
-		spawnMods(Player.headX, Player.headY, Player.radius, 2, 2)
+		spawnMods(Player.headX, Player.headY, Player.radius, 2, 2, 3, nil)
 	end
 end
 
@@ -230,39 +301,32 @@ function EndGame()
 end
 
 function manageBulletSpawns(dt)
-	if BulletSpawnTimer > 0 then
-		BulletSpawnTimer = BulletSpawnTimer - dt
-	else
-		spawnBullets(
-			love.math.random(ScreenWidth - 100),
-			love.math.random(ScreenHeight - 100),
-			BulletSpawnRows,
-			BulletSpawnColumns
-		)
-		BulletSpawnTimer = BulletSpawnRate
-	end
+    if ActiveWave then
+        if BulletSpawnTimer > 0 then
+            BulletSpawnTimer = BulletSpawnTimer - dt
+        else
+            spawnBullets(
+                love.math.random(ScreenWidth - 100),
+                love.math.random(ScreenHeight - 100),
+                BulletSpawnRows,
+                BulletSpawnColumns
+            )
+            BulletSpawnTimer = BulletSpawnRate
+        end
+    end
 end
 
-function manageModSpawns(dt)
-	if ModSpawnTimer > 0 then
-		ModSpawnTimer = ModSpawnTimer - dt
-	else
-		spawnMods(love.math.random(ScreenWidth - 50), love.math.random(ScreenHeight - 50), Player.radius, 1, 1)
-		ModSpawnTimer = ModSpawnRate
+function manageModSpawns()
+    if not StartOfWave and not ActiveWave and not SpawnedMods and GameState ~= "tutorial" then
+        spawnMods(ScreenWidth / 2.5, ScreenHeight / 4, 25, 1, 3, 10, nil)
+        SpawnedMods = true
 	end
 end
 
 function manageEnemySpawns(dt)
-	if EnemySpawnTimer > 0 then
-		EnemySpawnTimer = EnemySpawnTimer - dt
-	else
-		for i = 1, WaveCount do
-			spawnEnemy()
-			AllEnemiesDead = false
-		end
-		EnemySpawnTimer = EnemySpawnRate
-		WaveCount = WaveCount + 1
-	end
+    if StartOfWave and not ActiveWave and GameState ~= "tutorial" then
+        spawnEnemies(dt)
+    end
 end
 
 function deathAnimation()
@@ -299,24 +363,43 @@ function animateX(i)
 	love.graphics.draw(Dead, circle.x, circle.y, 0, 4, 4, Dead:getWidth() / 2, Dead:getHeight() / 2)
 end
 
-function spawnEnemy(n)
-	local xOffset = love.math.random(300)
-	local yOffset = love.math.random(300)
-	local enemySpawnLocations = {
-		{ x = ScreenWidth / 2 + xOffset, y = 0 },
-		{ x = ScreenWidth, y = ScreenHeight / 2 + yOffset },
-		{ x = ScreenWidth / 2 + xOffset, y = ScreenHeight },
-		{ x = 0, y = ScreenHeight / 2 + yOffset },
-	}
-	local spawn = nil
-	if n == nil then
-		spawn = enemySpawnLocations[love.math.random(#enemySpawnLocations)]
-	else
-		spawn = enemySpawnLocations[n]
-	end
-	table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
+function spawnEnemies(dt)
+    if WaveCurrSpawnCount <= WaveCount then
+        WaveSpawnComplete = false
+        if WaveSpawnBufferTimer > 0 then
+            WaveSpawnBufferTimer = WaveSpawnBufferTimer - dt
+        else
+            spawnEnemy()
+            WaveCurrSpawnCount = WaveCurrSpawnCount + 1
+            WaveSpawnBufferTimer = WaveSpawnBufferTimerInit
+        end
+    else
+        StartOfWave = false
+        ActiveWave = true
+        WaveCount = WaveCount + WaveCountAddition
+        WaveCurrSpawnCount = 0
+        WaveSpawnComplete = true
+    end
+end
 
-	PlayEnemySpawnSfx()
+function spawnEnemy(n)
+    local xOffset = love.math.random(ScreenWidth)
+    local yOffset = love.math.random(ScreenHeight)
+    local enemySpawnLocations = {
+        { x = xOffset, y = 0 },
+        { x = ScreenWidth, y = yOffset },
+        { x = xOffset, y = ScreenHeight },
+        { x = 0, y = yOffset },
+    }
+    local spawn = nil
+    if n == nil then
+        spawn = enemySpawnLocations[love.math.random(#enemySpawnLocations)]
+    else
+        spawn = enemySpawnLocations[n]
+    end
+    table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
+
+    PlayEnemySpawnSfx()
 end
 
 function spawnBullets(x, y, rows, columns)
@@ -336,17 +419,17 @@ function spawnBullets(x, y, rows, columns)
 	end
 end
 
-function spawnMods(x, y, radius, rows, columns, modType)
+function spawnMods(x, y, radius, rows, columns, spacing, modType)
 	local modSpawnX = x
 	local modSpawnY = y
 
 	for i = 1, rows do
 		for j = 1, columns do
 			spawnMod(modSpawnX, modSpawnY, radius, modType)
-			modSpawnX = modSpawnX + Mod.radius * 3
+			modSpawnX = modSpawnX + Mod.radius * spacing
 		end
 		modSpawnX = x
-		modSpawnY = modSpawnY + Mod.radius * 3
+		modSpawnY = modSpawnY + Mod.radius * spacing
 	end
 end
 
@@ -396,76 +479,6 @@ function PlayEnemySpawnSfx()
 	EnemySpawnSfxTable[n]:play()
 end
 
-function StartTutorial()
-    resetGlobalVars()
-
-	-- Audio
-	UltraLoungeSong:setLooping(true)
-	UltraLoungeSong:play()
-
-	-- Spawn Player and init
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 6)
-
-	-- Spawn tutorial areas
-	local bulletSpawnRows = 5
-	local bulletSpawnColumns = 10
-	local modSpawnRows = 2
-	local modSpawnColumns = 3
-
-	-- Bullet Area
-	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
-	spawnMod(140, 90, 20, "one")
-
-	-- Mod Area
-	spawnMods(ScreenWidth - 150, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
-	spawnMod(ScreenWidth - 105, 80, 20, "two")
-
-	-- Play Button Area
-	spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "three")
-	spawnMod(ScreenWidth / 2, ScreenHeight / 1.6, 20, "play")
-end
-
-function StartGame()
-    resetGlobalVars()
-	GameState = "play"
-
-	-- Audio
-	UltraLoungeSong:stop()
-	CheeZeeLabSong:setLooping(true)
-	CheeZeeLabSong:play()
-
-	-- Reset
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
-
-	-- New Values
-	BulletSpawnRows = 5
-	BulletSpawnColumns = 5
-
-	-- Inital spawns
-	spawnMod(ScreenWidth - 105, 80, 15)
-	spawnMod(105, 80, 15)
-	spawnMod(ScreenWidth - 105, ScreenHeight - 80, 15)
-	spawnMod(105, ScreenHeight - 80, 15)
-	spawnBullets(ScreenWidth / 2, ScreenHeight / 2, BulletSpawnRows, BulletSpawnColumns)
-
-	-- Init timers
-	InitBulletSpawnTime = 20
-	BulletSpawnTimer = InitBulletSpawnTime
-	BulletSpawnRate = 20
-
-	InitModSpawnTime = 5
-	ModSpawnTimer = InitModSpawnTime
-	ModSpawnRate = 25
-
-	WaveCount = 1
-	InitEnemySpawnTime = 1
-	EnemySpawnTimer = InitEnemySpawnTime
-	EnemySpawnRate = 10
-	-- EnemySpawnRateBuffer = 2
-	-- EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
-	EnemySpawnCount = 5
-	AllEnemiesDead = true
-end
 
 function resetGlobalVars()
 	-- Screenshake
@@ -486,7 +499,6 @@ function resetGlobalVars()
 	EnemyTable = {}
 	DormantBulletTable = {}
 	DormantModTable = {}
-
 end
 
 -- make error handling nice
