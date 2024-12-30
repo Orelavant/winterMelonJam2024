@@ -7,9 +7,9 @@ else
 end
 
 -- Audio
-UltraLoungeSong = love.audio.newSource("audio/ultraLounge.mp3", "stream")
+UltraLoungeSong = love.audio.newSource("audio/ultraLoungeCut.mp3", "stream")
 UltraLoungeSong:setVolume(0.2)
-CheeZeeLabSong = love.audio.newSource("audio/cheeZeeLab.mp3", "stream")
+CheeZeeLabSong = love.audio.newSource("audio/cheeZeeLabCut.mp3", "stream")
 CheeZeeLabSong:setVolume(0.2)
 ConsumeSfx = love.audio.newSource("audio/consume.wav", "static")
 CrossSfx = love.audio.newSource("audio/cross.wav", "static")
