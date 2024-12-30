@@ -6,6 +6,30 @@ else
 	DebugMode = false
 end
 
+-- Audio
+UltraLoungeSong = love.audio.newSource("audio/ultraLounge.mp3", "stream")
+UltraLoungeSong:setVolume(0.2)
+CheeZeeLabSong = love.audio.newSource("audio/cheeZeeLab.mp3", "stream")
+CheeZeeLabSong:setVolume(0.2)
+ConsumeSfx = love.audio.newSource("audio/consume.wav", "static")
+CrossSfx = love.audio.newSource("audio/cross.wav", "static")
+DamageSfx = love.audio.newSource("audio/damage.wav", "static")
+DeathSfx = love.audio.newSource("audio/death.wav", "static")
+EnlargenSfx = love.audio.newSource("audio/enlargen.wav", "static")
+FastSfx = love.audio.newSource("audio/fast.wav", "static")
+PowerupSfx = love.audio.newSource("audio/powerUp.wav", "static")
+ReverseSfx = love.audio.newSource("audio/reverse.wav", "static")
+ShootSfx1 = love.audio.newSource("audio/shoot1.wav", "static")
+ShootSfx2 = love.audio.newSource("audio/shoot2.wav", "static")
+ShootSfxTable = { ShootSfx1, ShootSfx2 }
+SplitSfx = love.audio.newSource("audio/split.wav", "static")
+HooverSfx = love.audio.newSource("audio/hoover.wav", "static")
+VomitSfx = love.audio.newSource("audio/vomit.wav", "static")
+EnemySpawnSfx1 = love.audio.newSource("audio/enemySpawn1.wav", "static")
+EnemySpawnSfx2 = love.audio.newSource("audio/enemySpawn2.wav", "static")
+EnemySpawnSfx3 = love.audio.newSource("audio/enemySpawn3.wav", "static")
+EnemySpawnSfxTable = { EnemySpawnSfx1, EnemySpawnSfx2, EnemySpawnSfx3 }
+
 function love.load()
 	-- Init Background image and screen
 	love.window.setMode(1200, 800)
@@ -24,30 +48,6 @@ function love.load()
 	LightBlue = Utils.normRgba(91, 118, 141)
 	Pink = Utils.normRgba(209, 124, 124)
 	Orange = Utils.normRgba(246, 198, 168)
-
-	-- Audio
-	UltraLoungeSong = love.audio.newSource("audio/ultraLounge.mp3", "stream")
-	UltraLoungeSong:setVolume(0.2)
-	CheeZeeLabSong = love.audio.newSource("audio/cheeZeeLab.mp3", "stream")
-	CheeZeeLabSong:setVolume(0.2)
-	ConsumeSfx = love.audio.newSource("audio/consume.wav", "static")
-	CrossSfx = love.audio.newSource("audio/cross.wav", "static")
-	DamageSfx = love.audio.newSource("audio/damage.wav", "static")
-	DeathSfx = love.audio.newSource("audio/death.wav", "static")
-	EnlargenSfx = love.audio.newSource("audio/enlargen.wav", "static")
-	FastSfx = love.audio.newSource("audio/fast.wav", "static")
-	PowerupSfx = love.audio.newSource("audio/powerUp.wav", "static")
-	ReverseSfx = love.audio.newSource("audio/reverse.wav", "static")
-	ShootSfx1 = love.audio.newSource("audio/shoot1.wav", "static")
-	ShootSfx2 = love.audio.newSource("audio/shoot2.wav", "static")
-	ShootSfxTable = { ShootSfx1, ShootSfx2 }
-	SplitSfx = love.audio.newSource("audio/split.wav", "static")
-	HooverSfx = love.audio.newSource("audio/hoover.wav", "static")
-	VomitSfx = love.audio.newSource("audio/vomit.wav", "static")
-	EnemySpawnSfx1 = love.audio.newSource("audio/enemySpawn1.wav", "static")
-	EnemySpawnSfx2 = love.audio.newSource("audio/enemySpawn2.wav", "static")
-	EnemySpawnSfx3 = love.audio.newSource("audio/enemySpawn3.wav", "static")
-	EnemySpawnSfxTable = { EnemySpawnSfx1, EnemySpawnSfx2, EnemySpawnSfx3 }
 
 	-- Init classes
 	PlayerInit = require("entities.player")
