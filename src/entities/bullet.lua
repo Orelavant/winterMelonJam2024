@@ -7,14 +7,15 @@ local utils = require("lib.utils")
 local Bullet = Circle:extend()
 
 -- Config
-Bullet.hooverSpeed = 100
+Bullet.hooverSpeed = 120
 Bullet.shootSpeed = 250
 Bullet.radius = 5
 Bullet.bulletRadiusStorageSize = 3
 Bullet.screenColType = Circle.SCREEN_COL_TYPES.delete
 Bullet.initModTimer = 0.3
 Bullet.speedMod = 150
-Bullet.enlargenMod = 2
+Bullet.enlargenMod = 4
+Bullet.splitShrink = 2
 
 ---Constructor
 function Bullet:new(x, y, dx, dy, radius, speed, color)
@@ -91,7 +92,7 @@ function Bullet:split()
 
     -- Make bullets smaller
     if self.radius >= 1 then
-        self.radius = self.radius - 1
+        self.radius = self.radius - Bullet.splitShrink
     end
 
     -- New active bullet

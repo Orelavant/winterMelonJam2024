@@ -35,7 +35,7 @@ Mod.MOD_IMGS = {
 }
 Mod.MOD_FUNCS = Bullet.MOD_FUNCS
 Mod.radius = 15
-Mod.hooverSpeed = 75
+Mod.hooverSpeed = 100
 Mod.maxVomitSpeed = 800
 Mod.minVomitSpeed = 400
 Mod.vomitSpeedDecayTime = 0.2

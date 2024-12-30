@@ -24,6 +24,18 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "enemy push each other apart",
+                    "id": "pkusdh7hzbwjdzrpvo72e5nb"
+                },
+                {
+                    "text": "Enemy spawn location fix",
+                    "id": "nkcwb8r7rr5mmts2ztslp1yf"
+                },
+                {
+                    "text": "Enemies shouldn't destory mods?",
+                    "id": "ykusqr54actm58btzal4ca64"
+                },
+                {
                     "text": "SPAWN STUFF",
                     "id": "lzcqfatfe286rmti4f7cwx4i"
                 },
@@ -206,9 +218,24 @@
             ],
             "id": "gantslawgexemp3m831yg9vg",
             "color": "#f78da7"
+        },
+        {
+            "title": "Juice",
+            "tasks": [
+                {
+                    "text": "Screenshake on mod collision",
+                    "id": "y4q1w0pk6wlgejth5mi6qyzf"
+                },
+                {
+                    "text": "",
+                    "id": "me4xy7eis91ceqp2f2frypkz"
+                }
+            ],
+            "id": "jjp0j0886ux9tq9re9592hvq",
+            "color": "var(--vscode-editor-foreground)"
         }
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735515908040
+    "timestamp": 1735521340129
 }

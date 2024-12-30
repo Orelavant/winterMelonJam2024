@@ -6,10 +6,6 @@ else
 	DebugMode = false
 end
 
--- Config
---- @enum gameStates
-
--- Callbacks
 function love.load()
 	-- Init Background image and screen
 	love.window.setMode(1200, 800)
@@ -18,6 +14,7 @@ function love.load()
 	ScreenWidthBuffer = 200
 	ScreenHeightBuffer = 200
 	Background = love.graphics.newImage("art/background.png")
+    Dead = love.graphics.newImage("art/dead.png")
 
 	-- Colors
 	-- https://lospec.com/palette-list/coldfire-gb
@@ -35,11 +32,15 @@ function love.load()
 	Mod = require("entities.mod")
 
 	-- Init state
-	GAME_STATES = { play = 0, done = 1, tutorial = 2 }
-	GameState = "tutorial"
-
-	-- Start tutorial area
-	StartTutorial()
+    --- @enum gameStates
+	GAME_STATES = { play = 0, over = 1, tutorial = 2 }
+    if DebugMode then
+        GameState = "play"
+        StartGame()
+    else
+        GameState = "tutorial"
+        StartTutorial()
+    end
 end
 
 function StartTutorial()
@@ -80,12 +81,6 @@ function StartGame()
 	DormantModTable = {}
 
 	-- New Values
-	EnemySpawnLocations = {
-		{ x = ScreenWidth / 2, y = 0 },
-		{ x = ScreenWidth, y = ScreenHeight / 2 },
-		{ x = ScreenWidth / 2, y = ScreenHeight },
-		{ x = 0, y = ScreenHeight / 2 },
-	}
 	BulletSpawnRows = 3
 	BulletSpawnColumns = 3
 
@@ -99,7 +94,10 @@ function StartGame()
 	ModSpawnRate = 15
 	InitEnemySpawnTime = 4
 	EnemySpawnTimer = InitEnemySpawnTime
-	EnemySpawnRate = 12
+	EnemySpawnRate = 4
+    -- EnemySpawnRateBuffer = 2
+    -- EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
+    EnemySpawnCount = 5
 end
 
 function love.update(dt)
@@ -110,69 +108,71 @@ function love.update(dt)
 		manageEnemySpawns(dt)
 	end
 
-	-- Update player
-	Player:update(dt)
+    if GAME_STATES[GameState] ~= GAME_STATES.over then
+        -- Update player
+        Player:update(dt)
 
-	-- Update bullets
-	for i = #ActiveBulletTable, 1, -1 do
-		-- Move bullet
-		local bullet = ActiveBulletTable[i]
-		bullet:update(dt)
+        -- Update bullets
+        for i = #ActiveBulletTable, 1, -1 do
+            -- Move bullet
+            local bullet = ActiveBulletTable[i]
+            bullet:update(dt)
 
-		-- Enemy Collision
-		for j = #EnemyTable, 1, -1 do
-			if bullet:checkCircleCollision(EnemyTable[j]) then
-				table.remove(EnemyTable, j)
-			end
-		end
+            -- Enemy Collision
+            for j = #EnemyTable, 1, -1 do
+                if bullet:checkCircleCollision(EnemyTable[j]) then
+                    table.remove(EnemyTable, j)
+                end
+            end
 
-		-- Remove if screen collision
-		if bullet.removeFlag then
-			table.remove(ActiveBulletTable, i)
-		end
-	end
+            -- Remove if screen collision
+            if bullet.removeFlag then
+                table.remove(ActiveBulletTable, i)
+            end
+        end
 
-	-- Update mods
-	for _, mod in ipairs(DormantModTable) do
-		mod:update(dt)
-	end
+        -- Update mods
+        for _, mod in ipairs(DormantModTable) do
+            mod:update(dt)
+        end
 
-	-- Update enemies
-	for i = #EnemyTable, 1, -1 do
-		-- Move enemy
-		local enemy = EnemyTable[i]
-		enemy:update(dt)
+        -- Update enemies
+        for i = #EnemyTable, 1, -1 do
+            -- Move enemy
+            local enemy = EnemyTable[i]
+            enemy:update(dt)
 
-		-- Player collision
-		for j, circle in ipairs(Player.chain) do
-			if enemy:checkCircleCollision(circle) then
-				if j == 1 then
-					EndGame()
-				elseif j == #Player.chain then
-					if #Player.bullets > 0 then
-						Player.bullets = {}
-					else
-						EndGame()
-					end
-				else
-					Player:removeFromChain(j)
-				end
+            -- Player collision
+            for j, circle in ipairs(Player.chain) do
+                if enemy:checkCircleCollision(circle) then
+                    if j == 1 then
+                        EndGame()
+                    elseif j == #Player.chain then
+                        if #Player.bullets > 0 then
+                            Player.bullets = {}
+                        else
+                            EndGame()
+                        end
+                    else
+                        Player:removeFromChain(j)
+                    end
 
-				table.remove(EnemyTable, i)
-			end
-		end
+                    table.remove(EnemyTable, i)
+                end
+            end
 
-		-- Mod collision
-		for k = #DormantModTable, 1, -1 do
-			if enemy:checkCircleCollision(DormantModTable[k]) then
-				table.remove(EnemyTable, i)
-				table.remove(DormantModTable, k)
-			end
-		end
+            -- Mod collision
+            -- for k = #DormantModTable, 1, -1 do
+            -- 	if enemy:checkCircleCollision(DormantModTable[k]) then
+            -- 		table.remove(EnemyTable, i)
+            -- 		table.remove(DormantModTable, k)
+            -- 	end
+            -- end
 
-		-- TODO push enemies apart from one another
-		-- Enemy collision
-	end
+            -- TODO push enemies apart from one another
+            -- Enemy collision
+        end
+    end
 end
 
 function love.draw()
@@ -240,11 +240,12 @@ function resetGame()
 end
 
 function EndGame()
+    GameState = "over"
 	print("you lose")
 end
 
 function manageBulletSpawns(dt)
-	if BulletSpawnTimer >= 0 then
+	if BulletSpawnTimer > 0 then
 		BulletSpawnTimer = BulletSpawnTimer - dt
 	else
 		spawnBullets(
@@ -258,7 +259,7 @@ function manageBulletSpawns(dt)
 end
 
 function manageModSpawns(dt)
-	if ModSpawnTimer >= 0 then
+	if ModSpawnTimer > 0 then
 		ModSpawnTimer = ModSpawnTimer - dt
 	else
 		spawnMods(love.math.random(ScreenWidth - 50), love.math.random(ScreenHeight - 50), Player.radius, 1, 1)
@@ -267,14 +268,40 @@ function manageModSpawns(dt)
 end
 
 function manageEnemySpawns(dt)
-	if EnemySpawnTimer >= 0 then
+	if EnemySpawnTimer > 0 then
 		EnemySpawnTimer = EnemySpawnTimer - dt
 	else
-		spawnEnemies(5 + WaveCount)
+        for i=1,WaveCount do
+            spawnEnemy(dt)
+        end
 		EnemySpawnTimer = EnemySpawnRate
 		WaveCount = WaveCount + 1
 	end
 end
+
+-- function spawnEnemies(dt)
+--     if EnemySpawnRateBufferTimer > 0 then
+--         EnemySpawnRateBufferTimer = EnemySpawnRateBufferTimer - dt
+--     else
+--         spawnEnemy()
+--         EnemySpawnCount = EnemySpawnCount - 1
+--         EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
+--     end
+-- end
+
+function spawnEnemy()
+    local xOffset = love.math.random(200)
+    local yOffset = love.math.random(200)
+    local enemySpawnLocations = {
+        { x = ScreenWidth / 2 + xOffset, y = 0 },
+        { x = ScreenWidth, y = ScreenHeight / 2 + yOffset },
+        { x = ScreenWidth / 2 + xOffset, y = ScreenHeight },
+        { x = 0, y = ScreenHeight / 2 + yOffset },
+    }
+    local spawn = enemySpawnLocations[love.math.random(#enemySpawnLocations)]
+    table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
+end
+
 
 function spawnBullets(x, y, rows, columns)
 	local bulletSpawnX = x
@@ -318,13 +345,6 @@ function spawnMod(x, y, radius, modType)
 	end
 
 	table.insert(DormantModTable, mod)
-end
-
-function spawnEnemies(n)
-	for i = 1, n do
-		local spawn = EnemySpawnLocations[love.math.random(#EnemySpawnLocations)]
-		table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
-	end
 end
 
 -- make error handling nice

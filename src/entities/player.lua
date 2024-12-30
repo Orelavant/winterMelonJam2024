@@ -10,7 +10,7 @@ local Player = Object:extend()
 
 -- Config
 Player.radius = 15
-Player.speed = 175
+Player.speed = 250
 Player.headFollowerCountScalar = 0.4
 Player.initChainCount = 2
 Player.initHeadFollowerCount = math.ceil(Player.initChainCount * Player.headFollowerCountScalar)
@@ -19,7 +19,7 @@ Player.hChainColorAddition = 0.05
 Player.tColor = Orange
 Player.tChainColorReduction = 0.05
 Player.bodyAccelDiv = 100
-Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 16)
+Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 8)
 Player.tailRangeDiv = 5
 Player.startingChainSpeed = 1500
 Player.clampBuffer = 1
@@ -90,8 +90,8 @@ function Player:drawChain()
 		circle:draw()
 
         -- Draw areas of influence
-        if DebugMode and i == #self.chain then
-            love.graphics.setColor({1, 1, 1, 0.3})
+        if i == #self.chain then
+            love.graphics.setColor({1, 1, 1, 0.4})
             love.graphics.circle(
                 "line",
                 circle.x,
@@ -99,6 +99,7 @@ function Player:drawChain()
                 self.hooverRange
             )
             if DebugMode then
+                love.graphics.setColor({1, 1, 1, 0.2})
                 love.graphics.circle(
                     "line",
                     circle.x,
