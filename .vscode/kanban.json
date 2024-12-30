@@ -5,6 +5,10 @@
             "title": "Bugs",
             "tasks": [
                 {
+                    "text": "Weird bug where if the palyer does the tutorail and collects the mods in the upper right corner, a starter mod will be missing",
+                    "id": "k87z022jsxkjyu3g3xctnyqz"
+                },
+                {
                     "text": "Enemies\n- adjust their turn angle over time\n- Make it so they don't stack on each other",
                     "id": "u712qnqhpob1zn9xfoad4v1k"
                 },
@@ -249,5 +253,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735531977985
+    "timestamp": 1735541358408
 }

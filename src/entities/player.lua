@@ -15,9 +15,9 @@ Player.headFollowerCountScalar = 0.4
 Player.initChainCount = 2
 Player.initHeadFollowerCount = math.ceil(Player.initChainCount * Player.headFollowerCountScalar)
 Player.hColor = DarkBlue
-Player.hChainColorAddition = 0.05
+Player.hChainColorAddition = 0.1
 Player.tColor = Orange
-Player.tChainColorReduction = 0.05
+Player.tChainColorReduction = 0.1
 Player.bodyAccelDiv = 100
 Player.tailAccel = Player.bodyAccelDiv / (Player.radius * 8)
 Player.tailRangeDiv = 5
@@ -54,6 +54,7 @@ function Player:new(x, y)
     self.tMoveRange = Player.inittMoveRange
     self.hooverRange = Player.initHooverRange
     self.tailMoving = false
+    self.hoovering = false
 
 	-- Create chain
 	self.chain = {}
@@ -91,7 +92,10 @@ function Player:drawChain()
 
         -- Draw areas of influence
         if i == #self.chain then
-            love.graphics.setColor({1, 1, 1, 0.4})
+            love.graphics.setColor({1, 1, 1, 0.2})
+            if self.hoovering then
+                love.graphics.setColor({1, 1, 1, 0.8})
+            end
             love.graphics.circle(
                 "line",
                 circle.x,
@@ -129,9 +133,11 @@ function Player:hoover(dt)
         local mouseX, mouseY = love.mouse.getPosition()
         local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
         if tailToMouseDist <= self.hooverRange then
+            self.hoovering = true
             self:hooverResources(mouseX, mouseY, dt)
             HooverSfx:play()
         else
+            self.hoovering = false
             HooverSfx:pause()
         end
     end
@@ -190,9 +196,17 @@ function Player:hooverMods(mouseX, mouseY, dt)
                 -- Remove from global mod table and put in player table
                 tailToModDist = utils.getDistance(self.tailX, self.tailY, mod.x, mod.y)
                 if tailToMouseDist <= self.hooverRange and tailToModDist <= Player.consumeRange then
-                    -- Start game check
+
+                    -- Start game/tutorial checks
                     if mod.modType == "play" then
                         StartGame()
+                    elseif mod.modType == "one" then
+                        spawnEnemy(2)
+                    elseif mod.modType == "two" then
+                        spawnEnemy(4)
+                        spawnEnemy(4)
+                        spawnEnemy(4)
+                        spawnEnemy(4)
                     end
 
                     -- Otherwise add mod to self
@@ -227,7 +241,7 @@ function Player:shoot(mouseX, mouseY)
         table.insert(ActiveBulletTable, bullet)
         table.remove(self.bullets, #self.bullets)
 
-        PlayShootfx()
+        PlayShootSfx()
     end
 end
 
@@ -282,6 +296,8 @@ function Player:updateHead(circle, dt)
     else
         dx = 0
     end
+
+    dx, dy = utils.normVectors(dx, dy)
 
     -- Update last nonzero dx dy
     if dx ~= 0 or dy ~= 0 then
@@ -450,7 +466,7 @@ function Player:initChain()
 
         -- Adding to body
         if i < chainCount then
-            table.insert(self.chain, Mod(self.tailX, self.tailY, Player.radius, currChainColor, currChainSpeed, self.mods[i].modType))
+            table.insert(self.chain, Mod(self.tailX, self.tailY, Player.radius, currChainColor, currChainSpeed, self.mods[chainCount - i].modType))
         else
             -- Adding tail, which is just a circle
             local circle = Circle(self.tailX, self.tailY, 0, 0, Player.radius, currChainSpeed, currChainColor)

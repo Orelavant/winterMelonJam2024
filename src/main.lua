@@ -14,7 +14,7 @@ function love.load()
 	ScreenWidthBuffer = 200
 	ScreenHeightBuffer = 200
 	Background = love.graphics.newImage("art/background.png")
-    Dead = love.graphics.newImage("art/dead.png")
+	Dead = love.graphics.newImage("art/dead.png")
 
 	-- Colors
 	-- https://lospec.com/palette-list/coldfire-gb
@@ -24,27 +24,30 @@ function love.load()
 	LightBlue = Utils.normRgba(91, 118, 141)
 	Pink = Utils.normRgba(209, 124, 124)
 	Orange = Utils.normRgba(246, 198, 168)
-    
-    -- Audio
-    ConsumeSfx = love.audio.newSource("audio/consume.wav", "static")
-    CrossSfx = love.audio.newSource("audio/cross.wav", "static")
-    DamageSfx = love.audio.newSource("audio/damage.wav", "static")
-    DeathSfx = love.audio.newSource("audio/death.wav", "static")
-    EnlargenSfx = love.audio.newSource("audio/enlargen.wav", "static")
-    FastSfx = love.audio.newSource("audio/fast.wav", "static")
-    PowerupSfx = love.audio.newSource("audio/powerup.wav", "static")
-    ReverseSfx = love.audio.newSource("audio/reverse.wav", "static")
-    ShootSfx1 = love.audio.newSource("audio/shoot1.wav", "static")
-    ShootSfx2 = love.audio.newSource("audio/shoot2.wav", "static")
-    ShootSfxTable = {ShootSfx1, ShootSfx2}
-    SplitSfx = love.audio.newSource("audio/split.wav", "static")
-    HooverSfx = love.audio.newSource("audio/hoover.wav", "static")
-    VomitSfx = love.audio.newSource("audio/vomit.wav", "static")
 
-    -- Screenshake
-	ShakeDuration = 0
-	ShakeWait = 0
-	ShakeOffset = {x = 0, y = 0}
+	-- Audio
+	UltraLoungeSong = love.audio.newSource("audio/ultraLounge.mp3", "stream")
+	UltraLoungeSong:setVolume(0.2)
+	CheeZeeLabSong = love.audio.newSource("audio/cheeZeeLab.mp3", "stream")
+	CheeZeeLabSong:setVolume(0.2)
+	ConsumeSfx = love.audio.newSource("audio/consume.wav", "static")
+	CrossSfx = love.audio.newSource("audio/cross.wav", "static")
+	DamageSfx = love.audio.newSource("audio/damage.wav", "static")
+	DeathSfx = love.audio.newSource("audio/death.wav", "static")
+	EnlargenSfx = love.audio.newSource("audio/enlargen.wav", "static")
+	FastSfx = love.audio.newSource("audio/fast.wav", "static")
+	PowerupSfx = love.audio.newSource("audio/powerup.wav", "static")
+	ReverseSfx = love.audio.newSource("audio/reverse.wav", "static")
+	ShootSfx1 = love.audio.newSource("audio/shoot1.wav", "static")
+	ShootSfx2 = love.audio.newSource("audio/shoot2.wav", "static")
+	ShootSfxTable = { ShootSfx1, ShootSfx2 }
+	SplitSfx = love.audio.newSource("audio/split.wav", "static")
+	HooverSfx = love.audio.newSource("audio/hoover.wav", "static")
+	VomitSfx = love.audio.newSource("audio/vomit.wav", "static")
+	EnemySpawnSfx1 = love.audio.newSource("audio/enemySpawn1.wav", "static")
+	EnemySpawnSfx2 = love.audio.newSource("audio/enemySpawn2.wav", "static")
+	EnemySpawnSfx3 = love.audio.newSource("audio/enemySpawn3.wav", "static")
+	EnemySpawnSfxTable = { EnemySpawnSfx1, EnemySpawnSfx2, EnemySpawnSfx3 }
 
 	-- Init classes
 	PlayerInit = require("entities.player")
@@ -53,198 +56,142 @@ function love.load()
 	Mod = require("entities.mod")
 
 	-- Init state
-    --- @enum gameStates
+	--- @enum gameStates
 	GAME_STATES = { play = 0, over = 1, tutorial = 2 }
-    if DebugMode then
-        GameState = "play"
-        StartGame()
-    else
-        GameState = "tutorial"
-        StartTutorial()
-    end
 
-    -- For death animation
-    Score = 0
-    DeathCount = 1
-    DeathAnimationLength = 1
-    DeathInitTimer = 1
-    DeathTimer = DeathInitTimer
-    DeathAnimationPerSecond = 0
-    DeathAnimationComplete = false
-end
-
-function StartTutorial()
-	-- Spawn Player and init
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 4)
-	ActiveBulletTable = {}
-	EnemyTable = {}
-	DormantBulletTable = {}
-	DormantModTable = {}
-
-	-- Spawn tutorial areas
-	local bulletSpawnRows = 5
-	local bulletSpawnColumns = 10
-	local modSpawnRows = 2
-	local modSpawnColumns = 3
-
-	-- Bullet Area
-	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
-	spawnMod(140, 90, 20, "one")
-
-	-- Mod Area
-	spawnMods(ScreenWidth - 150, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
-	spawnMod(ScreenWidth - 105, 80, 20, "two")
-
-	-- Play Button Area
-	spawnMod(ScreenWidth / 2, ScreenHeight / 2, 20, "three")
-	spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "play")
-end
-
-function StartGame()
-	GameState = "play"
-
-	-- Reset
-	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
-	ActiveBulletTable = {}
-	EnemyTable = {}
-	DormantBulletTable = {}
-	DormantModTable = {}
-
-	-- New Values
-	BulletSpawnRows = 3
-	BulletSpawnColumns = 3
-
-	-- Init timers
-	WaveCount = 0
-	InitBulletSpawnTime = 1
-	BulletSpawnTimer = InitBulletSpawnTime
-	BulletSpawnRate = 5
-	InitModSpawnTime = 2
-	ModSpawnTimer = InitModSpawnTime
-	ModSpawnRate = 7
-	InitEnemySpawnTime = 3
-	EnemySpawnTimer = InitEnemySpawnTime
-	EnemySpawnRate = 4
-    -- EnemySpawnRateBuffer = 2
-    -- EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
-    EnemySpawnCount = 5
+    -- Start game mode
+	if DebugMode then
+		GameState = "play"
+		StartGame()
+	else
+		GameState = "tutorial"
+		StartTutorial()
+	end
 end
 
 function love.update(dt)
-	if GAME_STATES[GameState] == GAME_STATES.play then
+	if GAME_STATES[GameState] == GAME_STATES.play and AllEnemiesDead then
 		-- Spawns
 		manageBulletSpawns(dt)
 		manageModSpawns(dt)
 		manageEnemySpawns(dt)
 	end
 
-    if GAME_STATES[GameState] ~= GAME_STATES.over then
-        screenShakeUpdate(dt)
+	if GAME_STATES[GameState] ~= GAME_STATES.over then
+		screenShakeUpdate(dt)
 
-        -- Update player
-        Player:update(dt)
+		-- Update player
+		Player:update(dt)
 
-        -- Update bullets
-        for i = #ActiveBulletTable, 1, -1 do
-            -- Move bullet
-            local bullet = ActiveBulletTable[i]
-            bullet:update(dt)
+		-- Update bullets
+		for i = #ActiveBulletTable, 1, -1 do
+			-- Move bullet
+			local bullet = ActiveBulletTable[i]
+			bullet:update(dt)
 
-            -- Enemy Collision
-            for j = #EnemyTable, 1, -1 do
-                if bullet:checkCircleCollision(EnemyTable[j]) then
-                    table.remove(EnemyTable, j)
+			-- Enemy Collision
+			for j = #EnemyTable, 1, -1 do
+				if bullet:checkCircleCollision(EnemyTable[j]) then
+					table.remove(EnemyTable, j)
 
-                    Score = Score + 10
-                    DeathSfx:play()
-                end
-            end
+					Score = Score + 10
+					DeathSfx:play()
+				end
+			end
 
-            -- Remove if screen collision
-            if bullet.removeFlag then
-                table.remove(ActiveBulletTable, i)
-            end
-        end
+			-- Remove if screen collision
+			if bullet.removeFlag then
+				table.remove(ActiveBulletTable, i)
+			end
+		end
 
-        -- Update mods
-        for _, mod in ipairs(DormantModTable) do
-            mod:update(dt)
-        end
+		-- Update mods
+		for _, mod in ipairs(DormantModTable) do
+			mod:update(dt)
+		end
 
-        -- Update enemies
-        for i = #EnemyTable, 1, -1 do
-            -- Move enemy
-            local enemy = EnemyTable[i]
-            enemy:update(dt)
+		-- Update enemies
+		if #EnemyTable > 0 then
+			for i = #EnemyTable, 1, -1 do
+				-- Move enemy
+				local enemy = EnemyTable[i]
+				enemy:update(dt)
 
-            -- Player collision
-            for j, circle in ipairs(Player.chain) do
-                if enemy:checkCircleCollision(circle) then
-                    if j == 1 then
-                        EndGame()
-                    elseif j == #Player.chain then
-                        EndGame()
-                    else
-                        Player:removeFromChain(j)
-                    end
+				-- Player collision
+				for j, circle in ipairs(Player.chain) do
+					if enemy:checkCircleCollision(circle) then
+						if j == 1 then
+							EndGame()
+						elseif j == #Player.chain then
+							EndGame()
+						else
+							Player:removeFromChain(j)
+						end
 
-                    table.remove(EnemyTable, i)
-                    applyScreenShake()
-                    DamageSfx:play()
-                end
-            end
-        end
-    end
+						table.remove(EnemyTable, i)
+						applyScreenShake()
+						DamageSfx:play()
+					end
+				end
+			end
+		else
+			AllEnemiesDead = true
+		end
+	end
 end
 
 function love.draw()
-    -- Background image
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(Background)
+	-- Background image
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.draw(Background)
 
-    if GameState ~= "over" then
-        shakeScreen()
+	if GameState ~= "over" then
+		shakeScreen()
 
-        -- Dormant Bullets
-        for _, bullet in ipairs(DormantBulletTable) do
-            bullet:draw()
-        end
+		-- Dormant Bullets
+		for _, bullet in ipairs(DormantBulletTable) do
+			bullet:draw()
+		end
 
-        -- Dormant Mods
-        for _, mod in ipairs(DormantModTable) do
-            mod:draw()
-        end
+		-- Dormant Mods
+		for _, mod in ipairs(DormantModTable) do
+			mod:draw()
+		end
 
-        -- Active Bullets
-        for _, bullet in ipairs(ActiveBulletTable) do
-            bullet:draw()
-        end
+		-- Active Bullets
+		for _, bullet in ipairs(ActiveBulletTable) do
+			bullet:draw()
+		end
 
-        -- Enemies
-        for _, enemy in ipairs(EnemyTable) do
-            enemy:draw()
-        end
+		-- Enemies
+		for _, enemy in ipairs(EnemyTable) do
+			enemy:draw()
+		end
 
-        -- Player
-        Player:draw()
+		-- Player
+		Player:draw()
 
-        -- Score
-        local scoreString = "Score: " .. Score
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print(scoreString, ScreenWidth-string.len(scoreString) * 10, 0, 0, 1.2, 1.2)
-    else
-        -- Player
-        Player:draw()
+		-- Score
+		local scoreString = "Score: " .. Score
+		love.graphics.setColor(0, 0, 0, 1)
+		love.graphics.print(scoreString, ScreenWidth - string.len(scoreString) * 10, 0, 0, 1.2, 1.2)
+	else
+		-- Player
+		Player:draw()
 
-        deathAnimation()
-    end
+		deathAnimation()
+	end
 end
 
 function love.keypressed(key)
 	-- Reset game
-	if DebugMode and key == "r" then
-		resetGame()
+	if key == "r" then
+        StartGame()
 	end
+
+    if GameState == "play" and key == "space" then
+        EnemySpawnTimer = 0
+    end
 
 	if DebugMode and key == "b" then
 		spawnBullets(Player.headX, Player.headY, 5, 5)
@@ -260,29 +207,26 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
-    if GAME_STATES[GameState] ~= GAME_STATES.over then
-        -- Shoot
-        if button == 1 then
-            Player:shoot(x, y)
-        end
+	if GAME_STATES[GameState] ~= GAME_STATES.over then
+		-- Shoot
+		if button == 1 then
+			Player:shoot(x, y)
+		end
 
-        -- Toss up mod
-        if button == 2 then
-            Player:removeFromChain(1)
+		-- Toss up mod
+		if button == 2 then
+			Player:removeFromChain(1)
 
-            VomitSfx:play()
-        end
-    end
-end
-
-function resetGame()
-	love.load()
+			VomitSfx:play()
+		end
+	end
 end
 
 function EndGame()
-    GameState = "over"
-    HooverSfx:stop()
-    DeathAnimationPerSecond = DeathAnimationLength / #Player.chain
+	GameState = "over"
+	CheeZeeLabSong:stop()
+	HooverSfx:stop()
+	DeathAnimationPerSecond = DeathAnimationLength / #Player.chain
 end
 
 function manageBulletSpawns(dt)
@@ -312,61 +256,68 @@ function manageEnemySpawns(dt)
 	if EnemySpawnTimer > 0 then
 		EnemySpawnTimer = EnemySpawnTimer - dt
 	else
-        for i=1,WaveCount do
-            spawnEnemy()
-        end
+		for i = 1, WaveCount do
+			spawnEnemy()
+			AllEnemiesDead = false
+		end
 		EnemySpawnTimer = EnemySpawnRate
 		WaveCount = WaveCount + 1
 	end
 end
 
 function deathAnimation()
-    -- Reduce timer and increment how many xs to draw
-    if not DeathAnimationComplete then
-        if DeathTimer > 0 then
-            DeathTimer = DeathTimer - love.timer.getDelta()
-        else
-            if DeathCount < #Player.chain then
-                CrossSfx:play()
-                DeathCount = DeathCount + 1
-                DeathTimer = DeathAnimationPerSecond
-            else
-                DeathAnimationComplete = true
-            end
-        end
-    end
+	-- Reduce timer and increment how many xs to draw
+	if not DeathAnimationComplete then
+		if DeathTimer > 0 then
+			DeathTimer = DeathTimer - love.timer.getDelta()
+		else
+			if DeathCount < #Player.chain then
+				CrossSfx:play()
+				DeathCount = DeathCount + 1
+				DeathTimer = DeathAnimationPerSecond
+			else
+				DeathAnimationComplete = true
+			end
+		end
+	end
 
-    -- Draw that many xs
-    for i=1,DeathCount do
-        animateX(i)
-    end
+	-- Draw that many xs
+	for i = 1, DeathCount do
+		animateX(i)
+	end
 
-    if DeathAnimationComplete then
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print("Final Score: ".. Score, ScreenWidth / 2 - 100, ScreenHeight / 2 - 100, 0, 2, 2)
-        love.graphics.print("Press R To Restart", ScreenWidth / 2 - 120, ScreenHeight / 2 + 100, 0, 2, 2)
-    end
+	if DeathAnimationComplete then
+		love.graphics.setColor(0, 0, 0, 1)
+		love.graphics.print("Final Score: " .. Score, ScreenWidth / 2 - 100, ScreenHeight / 2 - 100, 0, 2, 2)
+		love.graphics.print("Press R To Restart", ScreenWidth / 2 - 120, ScreenHeight / 2 + 100, 0, 2, 2)
+	end
 end
 
 function animateX(i)
-    love.graphics.setColor(1, 1, 1, 1)
-    local circle = Player.chain[i]
-    love.graphics.draw(Dead, circle.x, circle.y, 0, 4, 4, Dead:getWidth() / 2, Dead:getHeight() / 2)
+	love.graphics.setColor(1, 1, 1, 1)
+	local circle = Player.chain[i]
+	love.graphics.draw(Dead, circle.x, circle.y, 0, 4, 4, Dead:getWidth() / 2, Dead:getHeight() / 2)
 end
 
-function spawnEnemy()
-    local xOffset = love.math.random(200)
-    local yOffset = love.math.random(200)
-    local enemySpawnLocations = {
-        { x = ScreenWidth / 2 + xOffset, y = 0 },
-        { x = ScreenWidth, y = ScreenHeight / 2 + yOffset },
-        { x = ScreenWidth / 2 + xOffset, y = ScreenHeight },
-        { x = 0, y = ScreenHeight / 2 + yOffset },
-    }
-    local spawn = enemySpawnLocations[love.math.random(#enemySpawnLocations)]
-    table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
-end
+function spawnEnemy(n)
+	local xOffset = love.math.random(300)
+	local yOffset = love.math.random(300)
+	local enemySpawnLocations = {
+		{ x = ScreenWidth / 2 + xOffset, y = 0 },
+		{ x = ScreenWidth, y = ScreenHeight / 2 + yOffset },
+		{ x = ScreenWidth / 2 + xOffset, y = ScreenHeight },
+		{ x = 0, y = ScreenHeight / 2 + yOffset },
+	}
+	local spawn = nil
+	if n == nil then
+		spawn = enemySpawnLocations[love.math.random(#enemySpawnLocations)]
+	else
+		spawn = enemySpawnLocations[n]
+	end
+	table.insert(EnemyTable, EnemyInit(spawn.x, spawn.y, 0, 0))
 
+	PlayEnemySpawnSfx()
+end
 
 function spawnBullets(x, y, rows, columns)
 	local bulletSpawnX = x
@@ -413,20 +364,20 @@ function spawnMod(x, y, radius, modType)
 end
 
 function screenShakeUpdate(dt)
-    if ShakeDuration > 0 then
+	if ShakeDuration > 0 then
 		ShakeDuration = ShakeDuration - dt
 		if ShakeWait > 0 then
 			ShakeWait = ShakeWait - dt
 		else
-			ShakeOffset.x = love.math.random(-5,5)
-			ShakeOffset.y = love.math.random(-5,5)
+			ShakeOffset.x = love.math.random(-5, 5)
+			ShakeOffset.y = love.math.random(-5, 5)
 			ShakeWait = 0.05
 		end
 	end
 end
 
 function applyScreenShake()
-    ShakeDuration = 0.3
+	ShakeDuration = 0.3
 end
 
 function shakeScreen()
@@ -435,9 +386,107 @@ function shakeScreen()
 	end
 end
 
-function PlayShootfx()
-    local n = love.math.random(#ShootSfxTable)
-    ShootSfxTable[n]:play()
+function PlayShootSfx()
+	local n = love.math.random(#ShootSfxTable)
+	ShootSfxTable[n]:play()
+end
+
+function PlayEnemySpawnSfx()
+	local n = love.math.random(#EnemySpawnSfxTable)
+	EnemySpawnSfxTable[n]:play()
+end
+
+function StartTutorial()
+    resetGlobalVars()
+
+	-- Audio
+	UltraLoungeSong:setLooping(true)
+	UltraLoungeSong:play()
+
+	-- Spawn Player and init
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 6)
+
+	-- Spawn tutorial areas
+	local bulletSpawnRows = 5
+	local bulletSpawnColumns = 10
+	local modSpawnRows = 2
+	local modSpawnColumns = 3
+
+	-- Bullet Area
+	spawnBullets(50, 50, bulletSpawnRows, bulletSpawnColumns)
+	spawnMod(140, 90, 20, "one")
+
+	-- Mod Area
+	spawnMods(ScreenWidth - 150, 60, Player.radius, modSpawnRows, modSpawnColumns, "fast")
+	spawnMod(ScreenWidth - 105, 80, 20, "two")
+
+	-- Play Button Area
+	spawnMod(ScreenWidth / 2, ScreenHeight / 1.8, 20, "three")
+	spawnMod(ScreenWidth / 2, ScreenHeight / 1.6, 20, "play")
+end
+
+function StartGame()
+    resetGlobalVars()
+	GameState = "play"
+
+	-- Audio
+	UltraLoungeSong:stop()
+	CheeZeeLabSong:setLooping(true)
+	CheeZeeLabSong:play()
+
+	-- Reset
+	Player = PlayerInit(ScreenWidth / 2, ScreenHeight / 2)
+
+	-- New Values
+	BulletSpawnRows = 5
+	BulletSpawnColumns = 5
+
+	-- Inital spawns
+	spawnMod(ScreenWidth - 105, 80, 15)
+	spawnMod(105, 80, 15)
+	spawnMod(ScreenWidth - 105, ScreenHeight - 80, 15)
+	spawnMod(105, ScreenHeight - 80, 15)
+	spawnBullets(ScreenWidth / 2, ScreenHeight / 2, BulletSpawnRows, BulletSpawnColumns)
+
+	-- Init timers
+	InitBulletSpawnTime = 20
+	BulletSpawnTimer = InitBulletSpawnTime
+	BulletSpawnRate = 20
+
+	InitModSpawnTime = 5
+	ModSpawnTimer = InitModSpawnTime
+	ModSpawnRate = 25
+
+	WaveCount = 1
+	InitEnemySpawnTime = 1
+	EnemySpawnTimer = InitEnemySpawnTime
+	EnemySpawnRate = 10
+	-- EnemySpawnRateBuffer = 2
+	-- EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
+	EnemySpawnCount = 5
+	AllEnemiesDead = true
+end
+
+function resetGlobalVars()
+	-- Screenshake
+	ShakeDuration = 0
+	ShakeWait = 0
+	ShakeOffset = { x = 0, y = 0 }
+
+	-- For death animation
+	Score = 0
+	DeathCount = 1
+	DeathAnimationLength = 1
+	DeathInitTimer = 1
+	DeathTimer = DeathInitTimer
+	DeathAnimationPerSecond = 0
+	DeathAnimationComplete = false
+
+	ActiveBulletTable = {}
+	EnemyTable = {}
+	DormantBulletTable = {}
+	DormantModTable = {}
+
 end
 
 -- make error handling nice
