@@ -41,6 +41,15 @@ function love.load()
         GameState = "tutorial"
         StartTutorial()
     end
+
+    -- For death animation
+    Score = 0
+    DeathCount = 1
+    DeathAnimationLength = 1
+    DeathInitTimer = 1
+    DeathTimer = DeathInitTimer
+    DeathAnimationPerSecond = 0
+    DeathAnimationComplete = false
 end
 
 function StartTutorial()
@@ -122,6 +131,7 @@ function love.update(dt)
             for j = #EnemyTable, 1, -1 do
                 if bullet:checkCircleCollision(EnemyTable[j]) then
                     table.remove(EnemyTable, j)
+                    Score = Score + 10
                 end
             end
 
@@ -176,32 +186,39 @@ function love.update(dt)
 end
 
 function love.draw()
-	-- Background image
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(Background)
+    -- Background image
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(Background)
 
-	-- Dormant Bullets
-	for _, bullet in ipairs(DormantBulletTable) do
-		bullet:draw()
-	end
+    if GameState ~= "over" then
+        -- Dormant Bullets
+        for _, bullet in ipairs(DormantBulletTable) do
+            bullet:draw()
+        end
 
-	-- Dormant Mods
-	for _, mod in ipairs(DormantModTable) do
-		mod:draw()
-	end
+        -- Dormant Mods
+        for _, mod in ipairs(DormantModTable) do
+            mod:draw()
+        end
 
-	-- Active Bullets
-	for _, bullet in ipairs(ActiveBulletTable) do
-		bullet:draw()
-	end
+        -- Active Bullets
+        for _, bullet in ipairs(ActiveBulletTable) do
+            bullet:draw()
+        end
 
-	-- Enemies
-	for _, enemy in ipairs(EnemyTable) do
-		enemy:draw()
-	end
+        -- Enemies
+        for _, enemy in ipairs(EnemyTable) do
+            enemy:draw()
+        end
 
-	-- Player
-	Player:draw()
+        -- Player
+        Player:draw()
+    else
+        -- Player
+        Player:draw()
+
+        deathAnimation()
+    end
 end
 
 function love.keypressed(key)
@@ -215,7 +232,7 @@ function love.keypressed(key)
 	end
 
 	if DebugMode and key == "v" then
-		spawnEnemies(100, 100)
+		spawnEnemy()
 	end
 
 	if DebugMode and key == "c" then
@@ -224,15 +241,17 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
-	-- Shoot
-	if button == 1 then
-		Player:shoot(x, y)
-	end
+    if GAME_STATES[GameState] ~= GAME_STATES.over then
+        -- Shoot
+        if button == 1 then
+            Player:shoot(x, y)
+        end
 
-	-- Toss up mod
-	if button == 2 then
-		Player:removeFromChain(1)
-	end
+        -- Toss up mod
+        if button == 2 then
+            Player:removeFromChain(1)
+        end
+    end
 end
 
 function resetGame()
@@ -241,7 +260,7 @@ end
 
 function EndGame()
     GameState = "over"
-	print("you lose")
+    DeathAnimationPerSecond = DeathAnimationLength / #Player.chain
 end
 
 function manageBulletSpawns(dt)
@@ -272,22 +291,46 @@ function manageEnemySpawns(dt)
 		EnemySpawnTimer = EnemySpawnTimer - dt
 	else
         for i=1,WaveCount do
-            spawnEnemy(dt)
+            spawnEnemy()
         end
 		EnemySpawnTimer = EnemySpawnRate
 		WaveCount = WaveCount + 1
 	end
 end
 
--- function spawnEnemies(dt)
---     if EnemySpawnRateBufferTimer > 0 then
---         EnemySpawnRateBufferTimer = EnemySpawnRateBufferTimer - dt
---     else
---         spawnEnemy()
---         EnemySpawnCount = EnemySpawnCount - 1
---         EnemySpawnRateBufferTimer = EnemySpawnRateBuffer
---     end
--- end
+function deathAnimation()
+    -- Reduce timer and increment how many xs to draw
+    if not DeathAnimationComplete then
+        if DeathTimer > 0 then
+            DeathTimer = DeathTimer - love.timer.getDelta()
+        else
+            if DeathCount < #Player.chain then
+                DeathCount = DeathCount + 1
+                DeathTimer = DeathAnimationPerSecond
+            else
+                DeathAnimationComplete = true
+            end
+        end
+    end
+
+    -- Draw that many xs
+    for i=1,DeathCount do
+        animateX(i)
+    end
+
+    if DeathAnimationComplete then
+        love.graphics.setColor(0, 0, 0, 1)
+        -- love.graphics.draw(Dead, ScreenWidth / 2, ScreenHeight / 2, 0, 16, 16, Dead:getWidth() / 2, Dead:getHeight() / 2)
+        love.graphics.print("Final Score: ".. Score, ScreenWidth / 2 - 100, ScreenHeight / 2 - 100, 0, 2, 2)
+        love.graphics.print("Press R To Restart", ScreenWidth / 2 - 120, ScreenHeight / 2 + 100, 0, 2, 2)
+    end
+end
+
+function animateX(i)
+    love.graphics.setColor(1, 1, 1, 1)
+    local circle = Player.chain[i]
+    love.graphics.draw(Dead, circle.x, circle.y, 0, 4, 4, Dead:getWidth() / 2, Dead:getHeight() / 2)
+end
 
 function spawnEnemy()
     local xOffset = love.math.random(200)
