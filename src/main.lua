@@ -36,7 +36,7 @@ function love.load()
 	DeathSfx = love.audio.newSource("audio/death.wav", "static")
 	EnlargenSfx = love.audio.newSource("audio/enlargen.wav", "static")
 	FastSfx = love.audio.newSource("audio/fast.wav", "static")
-	PowerupSfx = love.audio.newSource("audio/powerup.wav", "static")
+	PowerupSfx = love.audio.newSource("audio/powerUp.wav", "static")
 	ReverseSfx = love.audio.newSource("audio/reverse.wav", "static")
 	ShootSfx1 = love.audio.newSource("audio/shoot1.wav", "static")
 	ShootSfx2 = love.audio.newSource("audio/shoot2.wav", "static")
@@ -478,7 +478,6 @@ function PlayEnemySpawnSfx()
 	local n = love.math.random(#EnemySpawnSfxTable)
 	EnemySpawnSfxTable[n]:play()
 end
-
 
 function resetGlobalVars()
 	-- Screenshake
