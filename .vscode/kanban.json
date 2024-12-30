@@ -24,20 +24,12 @@
             "title": "To-Do",
             "tasks": [
                 {
+                    "text": "If tail get hits lose bullets first?",
+                    "id": "jhn4c7ikiqlhxtfbgv8hozm2"
+                },
+                {
                     "text": "enemy push each other apart",
                     "id": "pkusdh7hzbwjdzrpvo72e5nb"
-                },
-                {
-                    "text": "Enemy spawn location fix",
-                    "id": "nkcwb8r7rr5mmts2ztslp1yf"
-                },
-                {
-                    "text": "Enemies shouldn't destory mods?",
-                    "id": "ykusqr54actm58btzal4ca64"
-                },
-                {
-                    "text": "SPAWN STUFF",
-                    "id": "lzcqfatfe286rmti4f7cwx4i"
                 },
                 {
                     "text": "Enemies\n- spawn in waves from edges of screen",
@@ -50,10 +42,6 @@
                 {
                     "text": "MUSIC",
                     "id": "ki13ikas8jlhvf6pw0j3pd4b"
-                },
-                {
-                    "text": "AUDIO",
-                    "id": "upsnwogqbkgcw1op65pvpt1y"
                 },
                 {
                     "text": "Score",
@@ -117,13 +105,58 @@
         },
         {
             "title": "Doing",
-            "tasks": [],
+            "tasks": [
+                {
+                    "text": "Playtest\n- Enemies need to come in waves\n- Start off with some random mod spawns in teh corners of the map",
+                    "id": "ewnvxyzd5yje5zg0vtpesp3a"
+                },
+                {
+                    "text": "Music",
+                    "id": "varu0lxmq0em7gzvjk56aa6r"
+                }
+            ],
             "id": "iuqvfox477vr1yocmykdnqq8",
             "color": "#0693e3"
         },
         {
             "title": "Done",
             "tasks": [
+                {
+                    "text": "AUDIO",
+                    "id": "upsnwogqbkgcw1op65pvpt1y"
+                },
+                {
+                    "text": "Enemy gobble up module sound",
+                    "id": "wej4i6upnonmdf5j8piigpq4"
+                },
+                {
+                    "text": "Enemy spawn and death noises",
+                    "id": "ozw6ixy5m2lwf3prikh3jrfa"
+                },
+                {
+                    "text": "Mod sound effects for when they are applied",
+                    "id": "b7fgm83rghm0p9y4fuitpl9x"
+                },
+                {
+                    "text": "Hoover suck and consume",
+                    "id": "ymcu6ttim5ckrwa4d7yahtkl"
+                },
+                {
+                    "text": "Shoot and module throw up",
+                    "id": "c7isxwxg1ku7fndutr31gjve"
+                },
+                {
+                    "text": "Enemy spawn location fix",
+                    "id": "nkcwb8r7rr5mmts2ztslp1yf"
+                },
+                {
+                    "text": "Enemies shouldn't destory mods?",
+                    "id": "ykusqr54actm58btzal4ca64"
+                },
+                {
+                    "text": "SPAWN STUFF",
+                    "id": "lzcqfatfe286rmti4f7cwx4i"
+                },
                 {
                     "text": "Vomit speed and decay is much sharper",
                     "id": "mqzhhymqcakav8fte63kpg66"
@@ -194,28 +227,7 @@
         },
         {
             "title": "Audio",
-            "tasks": [
-                {
-                    "text": "Enemy gobble up module sound",
-                    "id": "wej4i6upnonmdf5j8piigpq4"
-                },
-                {
-                    "text": "Enemy spawn and death noises",
-                    "id": "ozw6ixy5m2lwf3prikh3jrfa"
-                },
-                {
-                    "text": "Shoot and module throw up",
-                    "id": "c7isxwxg1ku7fndutr31gjve"
-                },
-                {
-                    "text": "Hoover suck and consume",
-                    "id": "ymcu6ttim5ckrwa4d7yahtkl"
-                },
-                {
-                    "text": "Mod sound effects for when they are applied",
-                    "id": "b7fgm83rghm0p9y4fuitpl9x"
-                }
-            ],
+            "tasks": [],
             "id": "gantslawgexemp3m831yg9vg",
             "color": "#f78da7"
         },
@@ -237,5 +249,5 @@
     ],
     "autosave": true,
     "saveToFile": true,
-    "timestamp": 1735521340129
+    "timestamp": 1735531977985
 }

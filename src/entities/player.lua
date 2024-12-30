@@ -127,7 +127,13 @@ end
 function Player:hoover(dt)
     if self.tailMoving then
         local mouseX, mouseY = love.mouse.getPosition()
-        self:hooverResources(mouseX, mouseY, dt)
+        local tailToMouseDist = utils.getDistance(self.tailX, self.tailY, mouseX, mouseY)
+        if tailToMouseDist <= self.hooverRange then
+            self:hooverResources(mouseX, mouseY, dt)
+            HooverSfx:play()
+        else
+            HooverSfx:pause()
+        end
     end
 end
 
@@ -160,6 +166,7 @@ function Player:hooverBullets(mouseX, mouseY, dt)
             table.remove(DormantBulletTable, i)
 
             self:handleBulletStorageAnimation()
+            ConsumeSfx:play()
         end
     end
 end
@@ -192,6 +199,8 @@ function Player:hooverMods(mouseX, mouseY, dt)
                     table.insert(self.mods, mod)
                     table.remove(DormantModTable, i)
                     self:addToChain()
+
+                    ConsumeSfx:play()
                 end
             end
         end
@@ -217,6 +226,8 @@ function Player:shoot(mouseX, mouseY)
         -- Add to active bullets, remove from self
         table.insert(ActiveBulletTable, bullet)
         table.remove(self.bullets, #self.bullets)
+
+        PlayShootfx()
     end
 end
 

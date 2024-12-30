@@ -106,19 +106,27 @@ function Bullet:split()
     -- Split dir of this bullet
     self.dx = cos2
     self.dy = sin2
+
+    SplitSfx:play()
 end
 
 function Bullet:fast()
     self.speed = self.speed + Bullet.speedMod
+
+    FastSfx:play()
 end
 
 function Bullet:reverse()
     self.dx = -self.dx
     self.dy = -self.dy
+
+    ReverseSfx:play()
 end
 
 function Bullet:enlargen()
     self.radius = self.radius + Bullet.enlargenMod
+
+    EnlargenSfx:play()
 end
 
 Bullet.MOD_FUNCS = {
